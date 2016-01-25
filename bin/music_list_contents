@@ -7,6 +7,8 @@
 #     <path relative to music root> <size in bytes> <mtime in seconds>
 #
 # The lines will be sorted by path.
+#
+# @author: Johnathan Davis
 
 import glob
 import os

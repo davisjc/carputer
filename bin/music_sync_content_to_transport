@@ -1,6 +1,8 @@
 #!/bin/python
 #
 # Copies missing music files to the carputer transport device.
+#
+# @author: Johnathan Davis
 
 import os
 import shutil

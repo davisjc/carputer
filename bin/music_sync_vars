@@ -1,4 +1,6 @@
 #!/bin/sh
+#
+# @author: Johnathan Davis
 
 _SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 _MUSIC_DIR="${HOME}/music"

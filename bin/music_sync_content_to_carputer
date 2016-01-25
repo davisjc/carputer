@@ -1,6 +1,8 @@
 #!/bin/python
 #
 # Updates carputer music library using delta information from transport device.
+#
+# @author: Johnathan Davis
 
 import glob
 import os

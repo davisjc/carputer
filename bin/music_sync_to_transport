@@ -27,7 +27,6 @@ if [[ $_TRANSPORT_ID != $(cat "${_TRANSPORT_DIR}/${_TRANSPORT_ID_FILE}") ]]; the
     kill -INT $$
 fi
 
-python "${_SCRIPT_DIR}/music_list_contents" "$_MUSIC_DIR" > "$_LIST_PC"
-
+python "${_SCRIPT_DIR}/music_list_contents" "$_MUSIC_DIR" > "$_LIST_PC" && \
 python "${_SCRIPT_DIR}/music_sync_content_to_transport" "$_MUSIC_DIR" "$_TRANSPORT_DIR"
 

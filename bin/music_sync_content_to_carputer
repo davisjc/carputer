@@ -30,7 +30,7 @@ if not os.path.isfile(path_list_car):
     sys.exit("List of files on car not found: " + path_list_car)
 
 def read_file(path):
-    with open(path) as f:
+    with open(path, encoding='utf-8') as f:
         return f.read().splitlines()
 
 def get_data_parts(line):

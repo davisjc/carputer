@@ -1,0 +1,32 @@
+#!/bin/python
+#
+# Lists the metadata of music for the specified music directory.
+#
+# Each file is represented by a separate line of the following format:
+#
+#     <path relative to music root> <size in bytes> <mtime in seconds>
+#
+# The lines will be sorted by path.
+
+import glob
+import os
+import stat
+import sys
+
+
+if len(sys.argv) < 2:
+    sys.exit("Please specify music directory.")
+
+path_music = os.path.abspath(sys.argv[1])
+f_pattern = os.path.join(path_music, "*", "*", "*")
+
+lines = []
+for f in glob.glob(f_pattern):
+    path_rel = os.path.relpath(f, path_music)
+    stat_data = os.stat(f)
+    lines.append("{} {} {}".format(path_rel, stat_data[stat.ST_SIZE], stat_data[stat.ST_MTIME]))
+lines.sort()
+
+for l in lines:
+    print(l)
+

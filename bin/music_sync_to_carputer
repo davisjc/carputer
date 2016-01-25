@@ -1,0 +1,41 @@
+#!/bin/sh
+#
+# Sync music state with carputer.
+#
+# This script does a few things:
+#
+#     1. Reads the list of last known music metadata of the source system from
+#        the transport device. This allows us to know what versions of what
+#        music files have gone stale and should be removed from the carputer.
+#
+#     2. Copies new music files from the transport device.
+#
+#     3. Update the transport device with the current carputer metadata.
+#
+#     4. TODO update mpd library with music changes
+#
+# @author: Johnathan Davis
+
+_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+source "${_SCRIPT_DIR}/music_sync_vars.sh"
+
+if [[ $(hostname) != "ford" ]]; then
+    echo -n "Warning! Not running on carputer. Proceed anyway? [y/N]: "
+    read -n 1 REPLY
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        echo "\nProceeding anyway."
+    else
+        kill -INT $$
+    fi
+fi
+
+if [[ $_TRANSPORT_ID != $(cat "${_TRANSPORT_DIR}/id") ]]; then
+    >&2 echo "Could not find valid carputer transport."
+    kill -INT $$
+fi
+
+python "${_SCRIPT_DIR}/music_sync_content_to_carputer.py" "$_MUSIC_DIR" "$_TRANSPORT_DIR"
+
+python "${_SCRIPT_DIR}/music_list_contents.py" "$_MUSIC_DIR" > "$_LIST_CAR"
+

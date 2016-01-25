@@ -1,0 +1,74 @@
+#!/bin/python
+#
+# Updates carputer music library using delta information from transport device.
+
+import glob
+import os
+import shutil
+import sys
+
+
+LIST_PC = 'file_list_pc.txt'
+LIST_CAR = 'file_list_car.txt'
+
+if len(sys.argv) < 2:
+    sys.exit("Please specify music directory.")
+if len(sys.argv) < 3:
+    sys.exit("Please specify transport directory.")
+
+path_music = sys.argv[1]
+path_transport = sys.argv[2]
+path_transport_music = os.path.join(path_transport, 'music')
+path_list_pc = os.path.join(path_transport, LIST_PC)
+path_list_car = os.path.join(path_transport, LIST_CAR)
+
+if not os.path.isfile(path_list_pc):
+    sys.exit("List of files on pc not found: " + path_list_pc)
+if not os.path.isfile(path_list_car):
+    sys.exit("List of files on car not found: " + path_list_car)
+
+def read_file(path):
+    with open(path) as f:
+        return f.read().splitlines()
+
+def get_data_parts(line):
+    return line.rsplit(" ", 2)
+
+lines_pc = read_file(path_list_pc)
+lines_car = read_file(path_list_car)
+lines_to_delete = frozenset(lines_car) - frozenset(lines_pc)
+lines_to_delete = sorted(lines_to_delete)
+
+print("Deleting stale files on carputer...")
+for line in lines_to_delete:
+    data = get_data_parts(line)
+    path = os.path.join(path_music, data[0])
+    path_album_dir = os.path.dirname(path)
+    path_artist_dir = os.path.dirname(path_album_dir)
+    try:
+        os.remove(path)
+        print("Deleted - {}".format(path))
+    except OSError:
+        print("Skipped missing - {}".format(path))
+    if os.path.isdir(path_album_dir) and not os.listdir(path_album_dir):
+        os.rmdir(path_album_dir)
+        print("Deleted empty album directory - {}".format(path_album_dir))
+        if os.path.isdir(path_artist_dir) and not os.listdir(path_artist_dir):
+            os.rmdir(path_artist_dir)
+            print("Deleted empty artist directory - {}".format(path_artist_dir))
+
+print("Done deleting stale files.\n")
+
+print("Copying new files to carputer...")
+for path_src in sorted(glob.glob(os.path.join(path_transport_music, "*", "*", "*"))):
+    path_rel = os.path.relpath(path_src, path_transport_music)
+    path_dst = os.path.join(path_music, path_rel)
+    path_dst_dir = os.path.dirname(path_dst)
+    if not os.path.isdir(path_dst_dir):
+        os.makedirs(path_dst_dir)
+    shutil.copy2(path_src, path_dst)
+    print("Wrote {}".format(path_dst))
+print("Done copying new files.")
+
+print("\nDone with sync.")
+

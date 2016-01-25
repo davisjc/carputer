@@ -1,0 +1,57 @@
+#!/bin/python
+#
+# Copies missing music files to the carputer transport device.
+
+import os
+import shutil
+import sys
+
+
+LIST_PC = 'file_list_pc.txt'
+LIST_CAR = 'file_list_car.txt'
+
+if len(sys.argv) < 2:
+    sys.exit("Please specify music directory.")
+if len(sys.argv) < 3:
+    sys.exit("Please specify transport directory.")
+
+path_music = sys.argv[1]
+path_transport = sys.argv[2]
+path_transport_music = os.path.join(path_transport, 'music')
+path_list_pc = os.path.join(path_transport, LIST_PC)
+path_list_car = os.path.join(path_transport, LIST_CAR)
+
+if not os.path.isfile(path_list_pc):
+    sys.exit("List of files on pc not found: " + path_list_pc)
+if not os.path.isfile(path_list_car):
+    sys.exit("List of files on car not found: " + path_list_car)
+
+def read_file(path):
+    with open(path) as f:
+        return f.read().splitlines()
+
+def get_data_parts(line):
+    return line.rsplit(" ", 2)
+
+lines_pc = read_file(path_list_pc)
+lines_car = read_file(path_list_car)
+lines_to_copy = frozenset(lines_pc) - frozenset(lines_car)
+lines_to_copy = sorted(lines_to_copy)
+
+print("Removing any old music files from transport device... ", end="")
+if os.path.isdir(path_transport_music):
+    shutil.rmtree(path_transport_music)
+print("Done\n")
+
+print("Copying missing music to transport device...\n")
+for line in lines_to_copy:
+    data = get_data_parts(line)
+    path_src = os.path.join(path_music, data[0])
+    path_dst = os.path.join(path_transport_music, data[0])
+    path_dst_dir = os.path.dirname(path_dst)
+    if not os.path.isdir(path_dst_dir):
+        os.makedirs(path_dst_dir)
+    shutil.copy2(path_src, path_dst)
+    print("Wrote {}".format(path_dst))
+print("\nDone with sync.")
+

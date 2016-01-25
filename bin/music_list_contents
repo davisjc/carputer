@@ -19,9 +19,10 @@ if len(sys.argv) < 2:
 
 path_music = os.path.abspath(sys.argv[1])
 
-files = sorted(glob.glob(os.path.join(path_music, "*", "*", "*")) +
-               glob.glob(os.path.join(path_music, "*")))
+files = sorted(glob.glob(os.path.join(path_music, "**"), recursive=True))
 for f in files:
+    if not os.path.isfile(f):
+        continue
     path_rel = os.path.relpath(f, path_music)
     stat_data = os.stat(f)
     print("{} {} {}".format(path_rel, stat_data[stat.ST_SIZE], stat_data[stat.ST_MTIME]))

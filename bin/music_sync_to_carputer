@@ -18,7 +18,7 @@
 
 _SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-source "${_SCRIPT_DIR}/music_sync_vars.sh"
+source "${_SCRIPT_DIR}/music_sync_vars"
 
 if [[ $(hostname) != "ford" ]]; then
     echo -n "Warning! Not running on carputer. Proceed anyway? [y/N]: "
@@ -35,7 +35,7 @@ if [[ $_TRANSPORT_ID != $(cat "${_TRANSPORT_DIR}/id") ]]; then
     kill -INT $$
 fi
 
-python "${_SCRIPT_DIR}/music_sync_content_to_carputer.py" "$_MUSIC_DIR" "$_TRANSPORT_DIR"
+python "${_SCRIPT_DIR}/music_sync_content_to_carputer" "$_MUSIC_DIR" "$_TRANSPORT_DIR"
 
-python "${_SCRIPT_DIR}/music_list_contents.py" "$_MUSIC_DIR" > "$_LIST_CAR"
+python "${_SCRIPT_DIR}/music_list_contents" "$_MUSIC_DIR" > "$_LIST_CAR"
 

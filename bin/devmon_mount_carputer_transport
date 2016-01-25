@@ -14,7 +14,7 @@ _DEVICE=$1
 _MNT=$2
 
 _SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "${_SCRIPT_DIR}/music_sync_vars.sh"
+source "${_SCRIPT_DIR}/music_sync_vars"
 
 if [[ -f "${_MNT}/id" && $(cat "${_MNT}/id") == "$_TRANSPORT_ID" ]]; then
     udevil umount $_DEVICE

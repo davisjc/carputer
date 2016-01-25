@@ -20,14 +20,14 @@
 
 _SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-source "${_SCRIPT_DIR}/music_sync_vars.sh"
+source "${_SCRIPT_DIR}/music_sync_vars"
 
 if [[ $_TRANSPORT_ID != $(cat "${_TRANSPORT_DIR}/id") ]]; then
     >&2 echo "Could not find valid carputer transport."
     kill -INT $$
 fi
 
-python "${_SCRIPT_DIR}/music_list_contents.py" "$_MUSIC_DIR" > "$_LIST_PC"
+python "${_SCRIPT_DIR}/music_list_contents" "$_MUSIC_DIR" > "$_LIST_PC"
 
-python "${_SCRIPT_DIR}/music_sync_content_to_transport.py" "$_MUSIC_DIR" "$_TRANSPORT_DIR"
+python "${_SCRIPT_DIR}/music_sync_content_to_transport" "$_MUSIC_DIR" "$_TRANSPORT_DIR"
 

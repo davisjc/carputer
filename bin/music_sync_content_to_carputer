@@ -60,7 +60,10 @@ for line in lines_to_delete:
 print("Done deleting stale files.\n")
 
 print("Copying new files to carputer...")
-for path_src in sorted(glob.glob(os.path.join(path_transport_music, "*", "*", "*"))):
+
+files = sorted(glob.glob(os.path.join(path_music, "*", "*", "*")) +
+               glob.glob(os.path.join(path_music, "*")))
+for path_src in files:
     path_rel = os.path.relpath(path_src, path_transport_music)
     path_dst = os.path.join(path_music, path_rel)
     path_dst_dir = os.path.dirname(path_dst)

@@ -18,15 +18,11 @@ if len(sys.argv) < 2:
     sys.exit("Please specify music directory.")
 
 path_music = os.path.abspath(sys.argv[1])
-f_pattern = os.path.join(path_music, "*", "*", "*")
 
-lines = []
-for f in glob.glob(f_pattern):
+files = sorted(glob.glob(os.path.join(path_music, "*", "*", "*")) +
+               glob.glob(os.path.join(path_music, "*")))
+for f in files:
     path_rel = os.path.relpath(f, path_music)
     stat_data = os.stat(f)
-    lines.append("{} {} {}".format(path_rel, stat_data[stat.ST_SIZE], stat_data[stat.ST_MTIME]))
-lines.sort()
-
-for l in lines:
-    print(l)
+    print("{} {} {}".format(path_rel, stat_data[stat.ST_SIZE], stat_data[stat.ST_MTIME]))
 

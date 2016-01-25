@@ -1,8 +1,19 @@
 #!/bin/sh
+#
+# Carputer transport device mount script.
+#
+# Triggers the work to sync the carputer with the transport device. Can be
+# executed by devmon (part of the udevil package) with arguments such as:
+#
+#     $ devmon --exec-on-drive "/path/to/this/script %f %d"
+#
+# @author: Johnathan Davis
+
 
 _DEVICE=$1
 _MNT=$2
 
+_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${_SCRIPT_DIR}/music_sync_vars.sh"
 
 if [[ -f "${_MNT}/id" && $(cat "${_MNT}/id") == "$_TRANSPORT_ID" ]]; then

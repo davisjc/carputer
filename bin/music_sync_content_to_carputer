@@ -63,7 +63,7 @@ print("Done deleting stale files.\n")
 
 print("Copying new files to carputer...")
 
-files = sorted(glob.glob(os.path.join(path_music, "**"), recursive=True))
+files = sorted(glob.glob(os.path.join(path_transport_music, "**"), recursive=True))
 for path_src in files:
     if not os.path.isfile(path_src):
         continue

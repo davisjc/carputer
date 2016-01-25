@@ -1,0 +1,26 @@
+#!/bin/sh
+#
+# Prepares a new carputer transport device.
+#
+# @author: Johnathan Davis
+
+_MNT=$1
+
+if [[ $# < 1 ]]; then
+    echo "Please specify the current mountpoint of the device."
+    kill -INT $$
+fi
+
+_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+source "${_SCRIPT_DIR}/music_sync_vars"
+
+echo "Using \"$_MNT\" as transport device..."
+
+cd $_MNT
+echo "${_TRANSPORT_ID}" > "${_TRANSPORT_ID_FILE}"
+touch "${_LIST_PC}"
+touch "${_LIST_CAR}"
+
+echo "Bootstrap done."
+

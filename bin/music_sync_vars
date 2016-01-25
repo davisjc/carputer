@@ -6,6 +6,7 @@ _SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 _MUSIC_DIR="${HOME}/music"
 _TRANSPORT_DIR=/media/carputer_transport
 _TRANSPORT_ID=4b06e916
+_TRANSPORT_ID_FILE=id
 _LIST_PC="${_TRANSPORT_DIR}/file_list_pc.txt"
 _LIST_CAR="${_TRANSPORT_DIR}/file_list_car.txt"
 _CARPUTER_HOST=ford

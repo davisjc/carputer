@@ -24,9 +24,8 @@ if [[ -f "${_MNT}/${_TRANSPORT_ID_FILE}" && $(cat "${_MNT}/${_TRANSPORT_ID_FILE}
     udevil umount $_DEVICE
     udevil mount $_DEVICE $_TRANSPORT_DIR
     if [[ "$(hostname)" == "$_CARPUTER_HOST" ]]; then
-        echo "carputer sync trigger!" > /home/eddie/carputerlog
-
-        #$_SCRIPT_DIR/music_sync_to_carputer
+        # Trigger carputer update.
+        $_SCRIPT_DIR/music_sync_to_carputer
 
         # TODO
         # udevil umount $_DEVICE

@@ -20,7 +20,7 @@ _SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source "${_SCRIPT_DIR}/music_sync_vars"
 
-if [[ $(hostname) != "ford" ]]; then
+if [[ "$(hostname)" != "$_CARPUTER_HOST" ]]; then
     echo -n "Warning! Not running on carputer. Proceed anyway? [y/N]: "
     read -n 1 REPLY
     if [[ $REPLY =~ ^[Yy]$ ]]; then

@@ -2,8 +2,11 @@
 #
 # Carputer transport device mount script.
 #
-# Triggers the work to sync the carputer with the transport device. Can be
-# executed by devmon (part of the udevil package) with arguments such as:
+# Mounts a recognized carputer transport device as determined by $_TRANSPORT_ID.
+#
+# When plugged into the carputer, also triggers work to sync with the transport device.
+#
+# Can be executed by devmon (part of the udevil package) with arguments such as:
 #
 #     $ devmon --exec-on-drive "/path/to/this/script %f %d"
 #
@@ -19,5 +22,11 @@ source "${_SCRIPT_DIR}/music_sync_vars"
 if [[ -f "${_MNT}/id" && $(cat "${_MNT}/id") == "$_TRANSPORT_ID" ]]; then
     udevil umount $_DEVICE
     udevil mount $_DEVICE $_TRANSPORT_DIR
+    if [[ "$(hostname)" == "$_CARPUTER_HOST" ]]; then
+        echo "carputer sync trigger!" > /home/eddie/carputerlog
+
+        # TODO
+        # udevil umount $_DEVICE
+    fi
 fi
 

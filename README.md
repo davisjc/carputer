@@ -39,6 +39,14 @@ misc install notes for Arch Linux (will revise):
 * hostapd and dhcpd are particular about start order, force waiting on NIC:
     * `systemctl enable systemd-networkd-wait-online.service`
 
+car notes:
+
+* on rear of "Shaker 500" stereo, the 24-pin connector has a couple easy-to-splice wires:
+    * pin 2 is ignition accessory "on" (gray/yellow shielding)
+        * logic high is ~12V
+        * logic low is ~0V
+    * pin 13 is ground (black/pink shielding)
+
 known issues:
 
 * hostapd

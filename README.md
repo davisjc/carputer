@@ -50,7 +50,12 @@ car notes:
 known issues:
 
 * hostapd
-    * "could not configure driver mode" could mean a couple things:
+    * "could not configure driver mode" could mean a few things:
         1. the wireless NIC does not support AP mode
         2. the wireless NIC was not properly brought up before hostapd was run
+        3. a driver for the wireless NIC is missing
+            * NOTE: To use the Edimax EW-7811Un as an AP on Arch Linux, the
+              [`hostapd-rtl871xdrv`](https://aur.archlinux.org/packages/hostapd-rtl871xdrv/)
+              package can be grabbed from the AUR, then specify `driver=rtl871xdrv` in the hostapd
+              config file.
 

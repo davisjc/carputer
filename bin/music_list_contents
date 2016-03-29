@@ -1,4 +1,4 @@
-#!/bin/python
+#!/bin/sh
 #
 # Lists the metadata of music for the specified music directory.
 #
@@ -10,22 +10,18 @@
 #
 # @author: Johnathan Davis
 
-import glob
-import os
-import stat
-import sys
+if [[ "$#" -lt 1 ]]; then
+    echo "Please specify music directory."
+    kill -INT $$
+fi
 
+music_dir=$1
 
-if len(sys.argv) < 2:
-    sys.exit("Please specify music directory.")
+cd $music_dir
+if [ $? -ne 0 ]; then
+    echo "Could not find directory: $music_dir"
+    kill -INT $$
+fi
 
-path_music = os.path.abspath(sys.argv[1])
-
-files = sorted(glob.glob(os.path.join(path_music, "**"), recursive=True))
-for f in files:
-    if not os.path.isfile(f):
-        continue
-    path_rel = os.path.relpath(f, path_music)
-    stat_data = os.stat(f)
-    print("{} {} {}".format(path_rel, stat_data[stat.ST_SIZE], stat_data[stat.ST_MTIME]))
+find -L . -type f -print0 | xargs -0 stat --format '%n %s %Y' | cut -c 3-| LC_COLLATE=C sort
 

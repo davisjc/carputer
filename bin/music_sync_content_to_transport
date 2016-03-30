@@ -1,59 +1,55 @@
-#!/bin/python
+#!/bin/sh
 #
 # Copies missing music files to the carputer transport device.
 #
 # @author: Johnathan Davis
 
-import os
-import shutil
-import sys
+if [[ "$#" -lt 1 ]]; then
+    echo "Please specify music directory."
+    kill -INT $$
+fi
+if [[ "$#" -lt 2 ]]; then
+    echo "Please specify transport directory."
+    kill -INT $$
+fi
 
+_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-LIST_PC = 'file_list_pc.txt'
-LIST_CAR = 'file_list_car.txt'
+source "${_SCRIPT_DIR}/music_sync_vars"
 
-if len(sys.argv) < 2:
-    sys.exit("Please specify music directory.")
-if len(sys.argv) < 3:
-    sys.exit("Please specify transport directory.")
+list_pc="${_TRANSPORT_DIR}/$_LIST_PC"
+list_car="${_TRANSPORT_DIR}/$_LIST_CAR"
+music_pc="$_MUSIC_DIR"
+music_transport="${_TRANSPORT_DIR}/music"
 
-path_music = sys.argv[1]
-path_transport = sys.argv[2]
-path_transport_music = os.path.join(path_transport, 'music')
-path_list_pc = os.path.join(path_transport, LIST_PC)
-path_list_car = os.path.join(path_transport, LIST_CAR)
+if [[ ! -f "$list_pc" ]]; then
+    echo "List of files on pc not found: $list_pc"
+    kill -INT $$
+fi
+if [[ ! -f "$list_car" ]]; then
+    echo "List of files on car not found: $list_car"
+    kill -INT $$
+fi
 
-if not os.path.isfile(path_list_pc):
-    sys.exit("List of files on pc not found: " + path_list_pc)
-if not os.path.isfile(path_list_car):
-    sys.exit("List of files on car not found: " + path_list_car)
+echo -n "Removing any old music files from transport device... "
+rm -r $music_transport 2> /dev/null
+mkdir $music_transport
+echo "Done"
+echo ""
 
-def read_file(path):
-    with open(path, encoding='utf-8') as f:
-        return f.read().splitlines()
+files_to_copy=$(LC_COLLATE=C comm $list_pc $list_car -23 | awk 'NF{NF-=2};1')
+file_count=$(echo "$files_to_copy" | wc -l)
 
-def get_data_parts(line):
-    return line.rsplit(" ", 2)
+# TODO check available space
 
-lines_pc = read_file(path_list_pc)
-lines_car = read_file(path_list_car)
-lines_to_copy = frozenset(lines_pc) - frozenset(lines_car)
-lines_to_copy = sorted(lines_to_copy)
+echo "Copying $file_count missing music file(s) to" \
+     "transport device..."
+echo ""
 
-print("Removing any old music files from transport device... ", end="")
-if os.path.isdir(path_transport_music):
-    shutil.rmtree(path_transport_music)
-print("Done\n")
+cd $music_pc
+echo "$files_to_copy" | tr '\n' '\0' | \
+    xargs -0 -L 1 -I {} cp -anv --parents "{}" $music_transport
 
-print("Copying missing music to transport device...\n")
-for line in lines_to_copy:
-    data = get_data_parts(line)
-    path_src = os.path.join(path_music, data[0])
-    path_dst = os.path.join(path_transport_music, data[0])
-    path_dst_dir = os.path.dirname(path_dst)
-    if not os.path.isdir(path_dst_dir):
-        os.makedirs(path_dst_dir)
-    shutil.copy2(path_src, path_dst)
-    print("Wrote {}".format(path_dst))
-print("\nDone with sync.")
+echo ""
+echo "Done with sync."
 

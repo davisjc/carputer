@@ -6,5 +6,6 @@
 #
 # @author: Johnathan Davis
 
-sudo chown -R eddie:users /sys/class/gpio
+sudo chown eddie:users /sys/class/gpio/*
+sudo chown eddie:users /sys/class/gpio/*/*
 

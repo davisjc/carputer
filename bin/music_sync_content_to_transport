@@ -40,13 +40,16 @@ echo ""
 files_to_copy=$(LC_COLLATE=C comm $list_pc $list_car -23 | awk 'NF{NF-=2};1')
 file_count=$(echo "$files_to_copy" | wc -l)
 
+cd $music_pc
 # TODO check available space
+#space_desired="$(echo "$files_to_copy" | awk 'NF{NF-=2};1' | tr '\n' '\0' |
+#    xargs -0 du -bcs | tail -1 | awk '{print $1}')"
+#space_available="$(df -B1 ${_TRANSPORT_DIR} | tail -1 | awk '{print $4}')"
 
 echo "Copying $file_count missing music file(s) to" \
      "transport device..."
 echo ""
 
-cd $music_pc
 echo "$files_to_copy" | tr '\n' '\0' | \
     xargs -0 -L 1 -I {} cp -anv --parents "{}" $music_transport
 

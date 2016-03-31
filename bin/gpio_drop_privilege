@@ -1,0 +1,10 @@
+#!/bin/sh
+#
+# Drop the privilege of the GPIO pins.
+#
+# FIXME fix privileges instead.
+#
+# @author: Johnathan Davis
+
+sudo chown -R eddie:users /sys/class/gpio
+

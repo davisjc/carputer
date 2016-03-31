@@ -8,8 +8,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source "${SCRIPT_DIR}/music_sync_vars"
 
+"$SCRIPT_DIR/gpio_drop_privilege"
+
 if [[ ! -e "/sys/class/gpio/gpio$PIN_STATUS_LIGHT" ]]; then
     echo "$PIN_STATUS_LIGHT" > /sys/class/gpio/export
+    "$SCRIPT_DIR/gpio_drop_privilege"
     echo "out" > /sys/class/gpio/gpio$PIN_STATUS_LIGHT/direction
 fi
 

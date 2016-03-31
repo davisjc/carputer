@@ -1,0 +1,13 @@
+[Unit]
+Description=Mausberry Power Supply
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+KillMode=none
+ExecStart=/usr/bin/tmux new-session -d -s power -n power /root/switch.sh
+ExecStop=/usr/bin/bash -c "/usr/bin/tmux send-keys -t power:power C-c"
+
+[Install]
+WantedBy=multi-user.target
+

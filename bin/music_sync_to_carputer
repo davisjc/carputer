@@ -12,8 +12,6 @@
 #
 #     3. Update the transport device with the current carputer metadata.
 #
-#     4. TODO update mpd library with music changes
-#
 # @author: Johnathan Davis
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -37,4 +35,6 @@ fi
 
 "${SCRIPT_DIR}/music_sync_content_to_carputer" "$MUSIC_DIR" "$TRANSPORT_DIR" && \
 "${SCRIPT_DIR}/music_list_contents" "$MUSIC_DIR" > "${TRANSPORT_DIR}/$LIST_CAR"
+
+sudo systemctl restart mpd.service
 

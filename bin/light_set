@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# Set the carputer status light to solid state.
+#
+# @author: Johnathan Davis
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+source "${SCRIPT_DIR}/music_sync_vars"
+
+"${SCRIPT_DIR}/gpio_setup"
+
+light_value=1
+
+if [[ "$#" -gt 0 ]]; then
+    light_value=$1
+fi
+
+echo $light_value > /sys/class/gpio/gpio$PIN_STATUS_LIGHT/value
+

@@ -1,0 +1,25 @@
+#!/bin/sh
+#
+# Turn on the carputer status light.
+#
+# @author: Johnathan Davis
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+source "${SCRIPT_DIR}/music_sync_vars"
+
+"${SCRIPT_DIR}/gpio_setup"
+
+light_value=1
+while [ true ]; do
+    echo $light_value > /sys/class/gpio/gpio$PIN_STATUS_LIGHT/value
+
+    if [[ $light_value == 1 ]]; then
+        light_value=0
+    else
+        light_value=1
+    fi
+
+    sleep $STATUS_LIGHT_PERIOD_SEC
+done
+

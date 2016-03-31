@@ -11,3 +11,10 @@ TRANSPORT_DIR=/media/carputer_transport
 TRANSPORT_ID=4b06e916
 TRANSPORT_ID_FILE=id
 
+# Used PINs:
+#  * 2-3,18,21 - HiFiBerry DAC+
+#  * 23,24 - Mausberry power supply
+PIN_STATUS_LIGHT=26
+
+STATUS_LIGHT_PERIOD_SEC=0.5
+

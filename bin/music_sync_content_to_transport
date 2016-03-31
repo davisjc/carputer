@@ -13,14 +13,14 @@ if [[ "$#" -lt 2 ]]; then
     kill -INT $$
 fi
 
-_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-source "${_SCRIPT_DIR}/music_sync_vars"
+source "${SCRIPT_DIR}/music_sync_vars"
 
-list_pc="${_TRANSPORT_DIR}/$_LIST_PC"
-list_car="${_TRANSPORT_DIR}/$_LIST_CAR"
-music_pc="$_MUSIC_DIR"
-music_transport="${_TRANSPORT_DIR}/music"
+list_pc="${TRANSPORT_DIR}/$LIST_PC"
+list_car="${TRANSPORT_DIR}/$LIST_CAR"
+music_pc="$MUSIC_DIR"
+music_transport="${TRANSPORT_DIR}/music"
 
 if [[ ! -f "$list_pc" ]]; then
     echo "List of files on pc not found: $list_pc"

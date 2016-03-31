@@ -33,8 +33,14 @@ if [[ $TRANSPORT_ID != $(cat "${TRANSPORT_DIR}/${TRANSPORT_ID_FILE}") ]]; then
     kill -INT $$
 fi
 
+light_blink &
+pid_blink=$!
+
 "${SCRIPT_DIR}/music_sync_content_to_carputer" "$MUSIC_DIR" "$TRANSPORT_DIR" && \
 "${SCRIPT_DIR}/music_list_contents" "$MUSIC_DIR" > "${TRANSPORT_DIR}/$LIST_CAR"
+
+kill $pid_blink
+light_set 0
 
 sudo systemctl restart mpd.service
 

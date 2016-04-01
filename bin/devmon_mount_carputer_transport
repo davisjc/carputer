@@ -2,9 +2,11 @@
 #
 # Carputer transport device mount script.
 #
-# Mounts a recognized carputer transport device as determined by $_TRANSPORT_ID.
+# Mounts a recognized carputer transport device as determined by $TRANSPORT_ID.
 #
-# When plugged into the carputer, also triggers work to sync with the transport device.
+# When plugged into the carputer, also triggers work to sync code and music
+# files with the transport device. Blinks the status light to indicate
+# transfer status.
 #
 # Can be executed by devmon (part of the udevil package) with arguments such as:
 #
@@ -20,12 +22,20 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source "${SCRIPT_DIR}/music_sync_vars"
 
+log_file="${TRANSPORT_DIR}/log.txt"
+carputer_repo="$(cd "${SCRIPT_DIR}" && git rev-parse --show-toplevel)"
+
 if [[ -f "${MNT}/${TRANSPORT_ID_FILE}" && $(cat "${MNT}/${TRANSPORT_ID_FILE}") == "$TRANSPORT_ID" ]]; then
     udevil umount "$DEVICE"
     udevil mount "$DEVICE" "$TRANSPORT_DIR"
     if [[ "$(hostname)" == "$CARPUTER_HOST" ]]; then
         "${SCRIPT_DIR}/light_blink" &
         pid_blink=$!
+
+        echo "$(date) -- Pulling most recent code from transport device..." |
+            tee -a "$log_file"
+        cd "$carputer_repo" && git pull | tee -a "$log_file"
+        echo "" | tee -a "$log_file"
 
         # TODO get mpd to stop auto-updating so we don't have to take it down.
         sudo systemctl stop mpd.service

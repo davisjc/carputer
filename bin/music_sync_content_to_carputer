@@ -34,26 +34,27 @@ if [[ ! -f "$list_car" ]]; then
     kill -INT $$
 fi
 
-files_stale=$(LC_COLLATE=C comm $list_pc $list_car -13 | awk 'NF{NF-=2};1')
+files_stale=$(LC_COLLATE=C comm "$list_pc" "$list_car" -13 | awk 'NF{NF-=2};1')
 files_stale_count=$(echo "$files_stale" | wc -l)
 
-cd $music_car
+cd "$music_car"
 echo "Removing $files_stale_count stale file(s) from carputer..."
 echo "$files_stale" | tr '\n' '\0' | \
     xargs -0 -L 1 -I {} rm -vf "{}"
 echo ""
 
 echo -n "Deleting empty music directories... "
-#find $music_car -type d -empty -delete
+find "$music_car" -type d -empty -delete
 echo "Done."
 echo ""
 
-files_to_copy=$(LC_COLLATE=C comm $list_pc $list_car -23 | awk 'NF{NF-=2};1')
+files_to_copy=$(LC_COLLATE=C comm "$list_pc" "$list_car" -23 | awk 'NF{NF-=2};1')
 files_to_copy_count=$(echo "$files_to_copy" | wc -l)
 
+cd "$music_transport"
 echo "Copying $files_to_copy_count new file(s) to carputer..."
 echo "$files_to_copy" | tr '\n' '\0' | \
-    xargs -0 -L 1 -I {} cp -av --parents "{}" $music_car
+    xargs -0 -L 1 -I {} cp -av --parents "{}" "$music_car"
 echo ""
 
 echo "Done with sync."

@@ -14,8 +14,6 @@
 #
 #     3. Copies new music files to the transport device.
 #
-#     4. TODO copy mpd library?
-#
 # @author: Johnathan Davis
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

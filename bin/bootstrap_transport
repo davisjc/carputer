@@ -17,7 +17,7 @@ source "${SCRIPT_DIR}/music_sync_vars"
 
 echo "Using \"$MNT\" as transport device..."
 
-cd $MNT
+cd "$MNT"
 echo "${TRANSPORT_ID}" > "${TRANSPORT_ID_FILE}"
 touch "${LIST_PC}"
 touch "${LIST_CAR}"

@@ -17,7 +17,7 @@ fi
 
 music_dir=$1
 
-cd $music_dir
+cd "$music_dir"
 if [ $? -ne 0 ]; then
     echo "Could not find directory: $music_dir"
     kill -INT $$

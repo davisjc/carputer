@@ -35,15 +35,15 @@ echo "$(date) -- Syncing content to transport device..."
 echo ""
 
 echo -n "Removing any old music files from transport device... "
-rm -r $music_transport 2> /dev/null
-mkdir $music_transport
+rm -r "$music_transport" 2> /dev/null
+mkdir "$music_transport"
 echo "Done"
 echo ""
 
-files_to_copy=$(LC_COLLATE=C comm $list_pc $list_car -23 | awk 'NF{NF-=2};1')
+files_to_copy=$(LC_COLLATE=C comm "$list_pc" "$list_car" -23 | awk 'NF{NF-=2};1')
 files_to_copy_count=$(echo "$files_to_copy" | wc -l)
 
-cd $music_pc
+cd "$music_pc"
 # TODO check available space
 #space_desired="$(echo "$files_to_copy" | awk 'NF{NF-=2};1' | tr '\n' '\0' |
 #    xargs -0 du -bcs | tail -1 | awk '{print $1}')"
@@ -54,7 +54,7 @@ echo "Copying $files_to_copy_count missing music file(s) to" \
 echo ""
 
 echo "$files_to_copy" | tr '\n' '\0' | \
-    xargs -0 -L 1 -I {} cp -anv --parents "{}" $music_transport
+    xargs -0 -L 1 -I {} cp -anv --parents "{}" "$music_transport"
 echo ""
 
 echo "Done with sync."

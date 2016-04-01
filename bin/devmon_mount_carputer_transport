@@ -21,14 +21,24 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/music_sync_vars"
 
 if [[ -f "${MNT}/${TRANSPORT_ID_FILE}" && $(cat "${MNT}/${TRANSPORT_ID_FILE}") == "$TRANSPORT_ID" ]]; then
-    udevil umount $DEVICE
-    udevil mount $DEVICE $TRANSPORT_DIR
+    udevil umount "$DEVICE"
+    udevil mount "$DEVICE" "$TRANSPORT_DIR"
     if [[ "$(hostname)" == "$CARPUTER_HOST" ]]; then
-        # Trigger carputer update.
-        $SCRIPT_DIR/music_sync_to_carputer
+        "${SCRIPT_DIR}/light_blink" &
+        pid_blink=$!
 
-        # TODO
-        # udevil umount $_DEVICE
+        # TODO get mpd to stop auto-updating so we don't have to take it down.
+        sudo systemctl stop mpd.service
+
+        # Trigger carputer update.
+        "$SCRIPT_DIR/music_sync_to_carputer"
+
+        sudo systemctl start mpd.service
+
+        udevil umount "$DEVICE"
+
+        kill $pid_blink
+        "${SCRIPT_DIR}/light_set" 0
     fi
 fi
 

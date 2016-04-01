@@ -20,6 +20,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source "${SCRIPT_DIR}/music_sync_vars"
 
+log_file="${TRANSPORT_DIR}/log.txt"
+
 if [[ $TRANSPORT_ID != $(cat "${TRANSPORT_DIR}/${TRANSPORT_ID_FILE}") ]]; then
     >&2 echo "Could not find valid carputer transport."
     kill -INT $$
@@ -27,5 +29,9 @@ fi
 
 "${SCRIPT_DIR}/music_list_contents" "$MUSIC_DIR" > "${TRANSPORT_DIR}/$LIST_PC" &&
 "${SCRIPT_DIR}/music_sync_content_to_transport" "$MUSIC_DIR" "$TRANSPORT_DIR" |
-    tee -a "${TRANSPORT_DIR}/log.txt"
+    tee -a "$log_file"
+
+echo "Pulling most recent code to transport device..." | tee -a "$log_file"
+cd "${TRANSPORT_DIR}/code" && git pull | tee -a "$log_file"
+echo "" | tee -a "$log_file"
 

@@ -34,6 +34,7 @@ if [[ -f "${MNT}/${TRANSPORT_ID_FILE}" && $(cat "${MNT}/${TRANSPORT_ID_FILE}") =
 
         echo "$(date) -- Pulling most recent code from transport device..." |
             tee -a "$log_file"
+        echo "" | tee -a "$log_file"
         cd "$carputer_repo" && git pull | tee -a "$log_file"
         echo "" | tee -a "$log_file"
 

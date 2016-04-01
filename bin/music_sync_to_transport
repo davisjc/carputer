@@ -35,6 +35,7 @@ fi
     tee -a "$log_file"
 
 echo "Pulling most recent code from host machine..." | tee -a "$log_file"
+echo "" | tee -a "$log_file"
 cd "${TRANSPORT_DIR}/code" && git pull | tee -a "$log_file"
 echo "" | tee -a "$log_file"
 

@@ -41,7 +41,7 @@ echo "Done"
 echo ""
 
 files_to_copy=$(LC_COLLATE=C comm "$list_pc" "$list_car" -23 | awk 'NF{NF-=2};1')
-files_to_copy_count=$(echo "$files_to_copy" | wc -l)
+files_to_copy_count=$(echo "$files_to_copy" | grep -c '[^[:space:]]')
 
 cd "$music_pc"
 # TODO check available space
@@ -49,12 +49,16 @@ cd "$music_pc"
 #    xargs -0 du -bcs | tail -1 | awk '{print $1}')"
 #space_available="$(df -B1 ${_TRANSPORT_DIR} | tail -1 | awk '{print $4}')"
 
-echo "Copying $files_to_copy_count missing music file(s) to" \
-     "transport device..."
-echo ""
+if [[ 0 != $files_to_copy_count ]]; then
+    echo "Copying $files_to_copy_count missing music file(s) to" \
+         "transport device..."
+    echo ""
 
-echo "$files_to_copy" | tr '\n' '\0' | \
-    xargs -0 -L 1 -I {} cp -anv --parents "{}" "$music_transport"
+    echo "$files_to_copy" | tr '\n' '\0' | \
+        xargs -0 -L 1 -I {} cp -anv --parents "{}" "$music_transport"
+else
+    echo "No files to copy!"
+fi
 echo ""
 
 echo "Done with sync."

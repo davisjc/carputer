@@ -22,7 +22,7 @@ echo "${TRANSPORT_ID}" > "${TRANSPORT_ID_FILE}"
 touch "${LIST_PC}"
 touch "${LIST_CAR}"
 
-git clone --bare "$(cd "${SCRIPT_DIR}" && git rev-parse --show-toplevel)" code.git
+git clone "$(cd "${SCRIPT_DIR}" && git rev-parse --show-toplevel)" code
 
 echo "Bootstrap done."
 

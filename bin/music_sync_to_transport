@@ -39,7 +39,7 @@ echo "" | tee -a "$log_file"
 cd "${TRANSPORT_DIR}/code" && git pull | tee -a "$log_file"
 echo "" | tee -a "$log_file"
 
-echo "Unmounting transport device..."
-cd "$SCRIPT_DIR"
+echo "Finishing write and unmounting transport device..."
+cd "$SCRIPT_DIR" # bail out of the transport directory to allow unmount
 udevil umount "$TRANSPORT_DIR"
 

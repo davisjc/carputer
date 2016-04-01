@@ -34,9 +34,10 @@ fi
 "${SCRIPT_DIR}/music_sync_content_to_transport" "$MUSIC_DIR" "$TRANSPORT_DIR" |
     tee -a "$log_file"
 
-echo "Pulling most recent code from host machine..." | tee -a "$log_file"
+echo "$(date) -- Pulling most recent code from host machine..." | tee -a "$log_file"
 echo "" | tee -a "$log_file"
-cd "${TRANSPORT_DIR}/code" && git pull | tee -a "$log_file"
+cd "${TRANSPORT_DIR}/code" && git fetch --all | tee -a "$log_file" &&
+    git reset --hard origin/master | tee -a "$log_file"
 echo "" | tee -a "$log_file"
 
 echo "Finishing write and unmounting transport device..."

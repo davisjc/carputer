@@ -25,7 +25,7 @@ if [[ $TRANSPORT_ID != $(cat "${TRANSPORT_DIR}/${TRANSPORT_ID_FILE}") ]]; then
     kill -INT $$
 fi
 
-"${SCRIPT_DIR}/music_list_contents" "$MUSIC_DIR" > "${TRANSPORT_DIR}/$LIST_PC" && \
-"${SCRIPT_DIR}/music_sync_content_to_transport" "$MUSIC_DIR" "$TRANSPORT_DIR" | \
+"${SCRIPT_DIR}/music_list_contents" "$MUSIC_DIR" > "${TRANSPORT_DIR}/$LIST_PC" &&
+"${SCRIPT_DIR}/music_sync_content_to_transport" "$MUSIC_DIR" "$TRANSPORT_DIR" |
     tee -a "${TRANSPORT_DIR}/log.txt"
 

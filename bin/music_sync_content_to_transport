@@ -37,7 +37,7 @@ echo ""
 echo -n "Removing any old music files from transport device... "
 rm -r "$music_transport" 2> /dev/null
 mkdir "$music_transport"
-echo "Done"
+echo "done"
 echo ""
 
 files_to_copy=$(LC_COLLATE=C comm "$list_pc" "$list_car" -23 | awk 'NF{NF-=2};1')

@@ -46,7 +46,7 @@ if [[ 0 != $files_stale_count ]]; then
 
     echo -n "Deleting empty music directories... "
     find "$music_car" -type d -empty -delete
-    echo "Done."
+    echo "done."
 else
     echo "No stale files!"
 fi

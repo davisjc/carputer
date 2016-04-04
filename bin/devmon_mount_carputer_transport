@@ -50,7 +50,7 @@ if [[ -f "${MNT}/${TRANSPORT_ID_FILE}" && $(cat "${MNT}/${TRANSPORT_ID_FILE}") =
         udevil umount "$DEVICE"
 
         kill $pid_blink
-        "${SCRIPT_DIR}/light_set" 0
+        "${SCRIPT_DIR}/light_set" 1
     fi
 fi
 

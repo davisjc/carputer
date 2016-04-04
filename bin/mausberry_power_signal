@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# Keep the carputer power supply active as long as the ignition is on and the
+# transport device is mounted.
+#
+# @author: Johnathan Davis
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+source "${SCRIPT_DIR}/vars"
+
+"${SCRIPT_DIR}/gpio_setup"
+
+while [[ 1 == 1 ]]; do
+    grep -qs "$TRANSPORT_DIR" /proc/mounts
+    transport_detached=$?
+    ignition_off="$(cat /sys/class/gpio/gpio$PIN_IGNITION_STATE/value)"
+    if [[ 1 == $ignition_off && 1 == $transport_detached ]]; then
+        poweroff
+    fi
+
+    sleep 1
+done
+

@@ -5,7 +5,8 @@ Description=Mausberry Power Supply
 Type=oneshot
 RemainAfterExit=yes
 KillMode=none
-ExecStart=/usr/bin/tmux new-session -d -s power -n power /root/switch.sh
+User=%I
+ExecStart=/usr/bin/tmux new-session -d -s power -n power /home/eddie/code/carputer/bin/mausberry_power_signal
 ExecStop=/usr/bin/bash -c "/usr/bin/tmux send-keys -t power:power C-c"
 
 [Install]

@@ -6,14 +6,13 @@ CARPUTER_HOST=ford
 LIST_CAR="file_list_car.txt"
 LIST_PC="file_list_pc.txt"
 MUSIC_DIR="${HOME}/music"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TRANSPORT_DIR=/media/carputer_transport
 TRANSPORT_ID=4b06e916
 TRANSPORT_ID_FILE=id
 
-# Used PINs:
-#     2-3,18,21 - HiFiBerry DAC+
-#     23,24 - Mausberry power supply
+# HiFiBerry DAC+ pins: 2-3 (config), 18-21 (sound interface)
+PIN_IGNITION_STATE=23 # goes hot when ignition turns off
+PIN_POWER_SIGNAL=24 # keep hot to maintain power
 PIN_STATUS_LIGHT=26
 
 STATUS_LIGHT_PERIOD_SEC=0.5

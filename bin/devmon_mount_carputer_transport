@@ -20,7 +20,7 @@ MNT=$2
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-source "${SCRIPT_DIR}/music_sync_vars"
+source "${SCRIPT_DIR}/vars"
 
 log_file="${TRANSPORT_DIR}/log.txt"
 carputer_repo="$(cd "${SCRIPT_DIR}" && git rev-parse --show-toplevel)"

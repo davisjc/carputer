@@ -15,7 +15,7 @@ fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-source "${SCRIPT_DIR}/music_sync_vars"
+source "${SCRIPT_DIR}/vars"
 
 list_pc="${TRANSPORT_DIR}/$LIST_PC"
 list_car="${TRANSPORT_DIR}/$LIST_CAR"

@@ -6,12 +6,12 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-source "${SCRIPT_DIR}/music_sync_vars"
+source "${SCRIPT_DIR}/vars"
 
 "${SCRIPT_DIR}/gpio_setup"
 
 light_value=1
-while [ true ]; do
+while [[ 1 == 1 ]]; do
     echo $light_value > /sys/class/gpio/gpio$PIN_STATUS_LIGHT/value
 
     if [[ $light_value == 1 ]]; then

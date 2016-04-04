@@ -40,12 +40,12 @@ if [[ -f "${MNT}/${TRANSPORT_ID_FILE}" && $(cat "${MNT}/${TRANSPORT_ID_FILE}") =
         echo "" | tee -a "$log_file"
 
         # TODO get mpd to stop auto-updating so we don't have to take it down.
-        sudo systemctl stop mpd.service
+        sudo systemctl stop mpd.service # add to sudoers file
 
         # Trigger carputer update.
         "$SCRIPT_DIR/music_sync_to_carputer"
 
-        sudo systemctl start mpd.service
+        sudo systemctl start mpd.service # add to sudoers file
 
         udevil umount "$DEVICE"
 

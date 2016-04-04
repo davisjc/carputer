@@ -9,14 +9,17 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source "${SCRIPT_DIR}/vars"
 
+echo -n "$(date) -- Setting up GPIO... "
 "${SCRIPT_DIR}/gpio_setup"
+echo "Done."
 
+echo "$(date) -- Waiting to shutdown..."
 while [[ 1 == 1 ]]; do
     grep -qs "$TRANSPORT_DIR" /proc/mounts
     transport_detached=$?
     ignition_off="$(cat /sys/class/gpio/gpio$PIN_IGNITION_STATE/value)"
     if [[ 1 == $ignition_off && 1 == $transport_detached ]]; then
-        poweroff
+        sudo poweroff # add to sudoers file
     fi
 
     sleep 1

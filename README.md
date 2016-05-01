@@ -1,5 +1,44 @@
 # carputer
+
 music computer for car
+
+## about
+
+This project is my attempt at building an easy-to-use music system for my car.
+Previously, I had used various streaming utilities on my phone that would shovel
+lossy-encoded music over LTE, but this wasn't ideal for me.  Also, my phone
+isn't nearly large enough to hold all the music I want offline.
+
+## design priorities
+
+* Entire music collection available in lossless, CD-quality encoding (FLAC).
+* Avoiding streaming large amounts of data over my cell phone.
+* Maintain easy strategy for keeping music in sync with my collection.
+* Tactile interface for controlling music (using a touch screen in a car is much
+too distracting and dangerous while driving).
+* Simple and flexible design that allows for easy customization and
+extensibility.
+
+## approach
+
+Earlier on I waffled around with many complex ideas, which extended to
+fabricating an entirely new stereo head unit for my car that would have a
+screen, controls, GPS, WiFi, disc burner, and some database-backed music
+tracking program that would allow me to track offline what music was missing or
+otherwise out-of-sync with my collection at home.
+
+I realized that many of the things I was considering to make were already made,
+e.g., I wasn't about to make a better or easier to use Google Maps than was
+already available through my phone.  My existing stereo head unit already
+handles analog input well and doesn't need to be redone.  Also, I hadn't quite
+thought out the best way for syncing music with the carputer.
+
+The biggest lesson I learned from this project is eliminating components of the
+system that weren't really important, and actually compromised the cleaniness of
+the system.
+
+## the build
+
 
 misc install notes for Arch Linux (will revise):
 

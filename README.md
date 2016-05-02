@@ -1,44 +1,61 @@
-# carputer
+# Carputer
 
-music computer for car
+Music computer for car.
 
-## about
+## About
 
-This project is my attempt at building an easy-to-use music system for my car.
-Previously, I had used various streaming utilities on my phone that would shovel
-lossy-encoded music over LTE, but this wasn't ideal for me.  Also, my phone
-isn't nearly large enough to hold all the music I want offline.
+I love listening to music while driving, and want to be as uninhibited as
+possible while doing so.
 
-## design priorities
+Previously, I had used various mobile streaming apps or would store select music
+directly on my phone, but I wasn't ever really satisfied with these solutions.
+I always had to be aware of how much lossy-encoded music I was shovelling over
+LTE or which songs I'd choose to put on my phone, since space is limited and my
+music collection is large.
 
-* Entire music collection available in lossless, CD-quality encoding (FLAC).
-* Avoiding streaming large amounts of data over my cell phone.
-* Maintain easy strategy for keeping music in sync with my collection.
-* Tactile interface for controlling music (using a touch screen in a car is much
-too distracting and dangerous while driving).
-* Simple and flexible design that allows for easy customization and
+This project is my solution to having my entire music collection in full
+fidelity available in my car, while making it simple to keep in sync with my
+collection at home.
+
+## Design Priorities
+
+* Provide entire music collection in lossless, CD-quality encoding (FLAC).
+* Avoid streaming data over my cell phone.
+* Make syncing music an easy and non-interfering process.
+* Use simple and flexible design that allows for easy customization and
 extensibility.
+* Allow for tactile controls for controlling music (using a touch screen in a
+car kind of sucks ...and not to mention is dangerous).
 
-## approach
+## Approach
 
-Earlier on I waffled around with many complex ideas, which extended to
-fabricating an entirely new stereo head unit for my car that would have a
-screen, controls, GPS, WiFi, disc burner, and some database-backed music
-tracking program that would allow me to track offline what music was missing or
-otherwise out-of-sync with my collection at home.
+This project was a good exercise in reframing a problem.  Many ideas I had
+upfront were either over-engineered or not really relevant to my priorities.
 
-I realized that many of the things I was considering to make were already made,
-e.g., I wasn't about to make a better or easier to use Google Maps than was
-already available through my phone.  My existing stereo head unit already
-handles analog input well and doesn't need to be redone.  Also, I hadn't quite
-thought out the best way for syncing music with the carputer.
+Earlier, I waffled around with many complex ideas, which included a lot of "why
+not" thoughts that extended to fabricating an entirely new stereo head unit for
+my car that would have a screen, controls, GPS, WiFi, disc burner, and some
+database-backed music tracking program that would track offline what music was
+missing or otherwise out-of-sync with my collection at home by calculating and
+comparing file hashes.
 
-The biggest lesson I learned from this project is eliminating components of the
-system that weren't really important, and actually compromised the cleaniness of
-the system.
+I realized that many of the ideas I was considering were already well made:
+e.g., I wasn't about to casually make an easier to use interface to Google Maps
+than was already available on my phone.  Speaking of the phone: it's a quality
+display that can be mounted on the dash.  My existing stereo head unit already
+handles analog input well and doesn't need to be redone.
 
-## the build
+With those considerations in mind, all I really needed is a small computer with
+large persistent storage that can be controlled by my phone (and more ideally,
+physical buttons), and a simple strategy for getting music collection changes
+synced between two offline systems using something like a USB thumb drive as a
+messenger of state.
 
+## The Build
+
+
+
+## Misc.
 
 misc install notes for Arch Linux (will revise):
 

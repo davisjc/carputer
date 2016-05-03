@@ -15,12 +15,12 @@ fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-source "${SCRIPT_DIR}/vars"
+source "$SCRIPT_DIR/vars"
 
-list_pc="${TRANSPORT_DIR}/$LIST_PC"
-list_car="${TRANSPORT_DIR}/$LIST_CAR"
+list_pc="$TRANSPORT_DIR/$LIST_PC"
+list_car="$TRANSPORT_DIR/$LIST_CAR"
 music_car="$MUSIC_DIR"
-music_transport="${TRANSPORT_DIR}/music"
+music_transport="$TRANSPORT_DIR/music"
 
 echo "$(date) -- Syncing content to carputer..."
 echo ""

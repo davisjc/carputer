@@ -6,9 +6,9 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-source "${SCRIPT_DIR}/vars"
+source "$SCRIPT_DIR/vars"
 
-"${SCRIPT_DIR}/gpio_setup"
+"$SCRIPT_DIR/gpio_setup"
 
 light_value=1
 

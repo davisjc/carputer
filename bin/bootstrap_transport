@@ -13,16 +13,16 @@ fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-source "${SCRIPT_DIR}/vars"
+source "$SCRIPT_DIR/vars"
 
 echo "Using \"$MNT\" as transport device..."
 
 cd "$MNT"
-echo "${TRANSPORT_ID}" > "${TRANSPORT_ID_FILE}"
-touch "${LIST_PC}"
-touch "${LIST_CAR}"
+echo "$TRANSPORT_ID" > "$TRANSPORT_ID_FILE"
+touch "$LIST_PC"
+touch "$LIST_CAR"
 
-git clone "$(cd "${SCRIPT_DIR}" && git rev-parse --show-toplevel)" code
+git clone "$(cd "$SCRIPT_DIR" && git rev-parse --show-toplevel)" code
 
 echo "Bootstrap done."
 

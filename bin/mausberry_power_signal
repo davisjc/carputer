@@ -7,14 +7,14 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-source "${SCRIPT_DIR}/vars"
+source "$SCRIPT_DIR/vars"
 
 echo -n "$(date) -- Setting up GPIO... "
-"${SCRIPT_DIR}/gpio_setup"
+"$SCRIPT_DIR/gpio_setup"
 echo "done."
 
 echo -n "$(date) -- Turning on status light... "
-"${SCRIPT_DIR}/light_set" 1
+"$SCRIPT_DIR/light_set" 1
 echo "done."
 
 echo "$(date) -- Waiting to shutdown..."

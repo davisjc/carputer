@@ -5,7 +5,7 @@
 CARPUTER_HOST=ford
 LIST_CAR="file_list_car.txt"
 LIST_PC="file_list_pc.txt"
-MUSIC_DIR="${HOME}/music"
+MUSIC_DIR="$HOME/music"
 TRANSPORT_DIR=/media/carputer_transport
 TRANSPORT_ID=4b06e916
 TRANSPORT_ID_FILE=id

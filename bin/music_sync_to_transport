@@ -20,23 +20,23 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-source "${SCRIPT_DIR}/vars"
+source "$SCRIPT_DIR/vars"
 
-log_file="${TRANSPORT_DIR}/log.txt"
+log_file="$TRANSPORT_DIR/log.txt"
 
-if [[ $TRANSPORT_ID != $(cat "${TRANSPORT_DIR}/${TRANSPORT_ID_FILE}") ]]; then
+if [[ $TRANSPORT_ID != $(cat "$TRANSPORT_DIR/$TRANSPORT_ID_FILE") ]]; then
     >&2 echo "Could not find valid carputer transport."
     >&2 echo "Please verify mount and id file."
     kill -INT $$
 fi
 
-"${SCRIPT_DIR}/music_list_contents" "$MUSIC_DIR" > "${TRANSPORT_DIR}/$LIST_PC" &&
-"${SCRIPT_DIR}/music_sync_content_to_transport" "$MUSIC_DIR" "$TRANSPORT_DIR" |
+"$SCRIPT_DIR/music_list_contents" "$MUSIC_DIR" > "$TRANSPORT_DIR/$LIST_PC" &&
+"$SCRIPT_DIR/music_sync_content_to_transport" "$MUSIC_DIR" "$TRANSPORT_DIR" |
     tee -a "$log_file"
 
 echo "$(date) -- Pulling most recent code from host machine..." | tee -a "$log_file"
 echo "" | tee -a "$log_file"
-cd "${TRANSPORT_DIR}/code" && git fetch --all | tee -a "$log_file" &&
+cd "$TRANSPORT_DIR/code" && git fetch --all | tee -a "$log_file" &&
     git reset --hard origin/master | tee -a "$log_file"
 echo "" | tee -a "$log_file"
 

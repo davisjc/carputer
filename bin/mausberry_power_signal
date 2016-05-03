@@ -18,12 +18,22 @@ echo -n "$(date) -- Turning on status light... "
 echo "done."
 
 echo "$(date) -- Waiting to shutdown..."
-while [[ 1 == 1 ]]; do
+off_count=0
+while (( 1 == 1 )); do
     grep -qs "$TRANSPORT_DIR" /proc/mounts
     transport_attached=$(($? == 0))
     ignition_on=$(($(cat /sys/class/gpio/gpio$PIN_IGNITION_STATE/value) == 0))
-    if [[ $ignition_on == 1 && $transport_attached == 1 ]]; then
+    if (( $ignition_on == 1 &&
+          $transport_attached == 1 &&
+          $off_count >= $POWER_OFF_DELAY_SECS ))
+    then
         sudo poweroff # add to sudoers file
+    fi
+
+    if (( $ignition_on == 1 )); then
+        off_count=0
+    else # ignition off
+        off_count=$(($off_count + 1))
     fi
 
     sleep 1

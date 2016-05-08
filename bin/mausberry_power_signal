@@ -23,8 +23,8 @@ while (( 1 == 1 )); do
     grep -qs "$TRANSPORT_DIR" /proc/mounts
     transport_attached=$(($? == 0))
     ignition_on=$(($(cat /sys/class/gpio/gpio$PIN_IGNITION_STATE/value) == 0))
-    if (( $ignition_on == 1 &&
-          $transport_attached == 1 &&
+    if (( $ignition_on == 0 &&
+          $transport_attached == 0 &&
           $off_count >= $POWER_OFF_DELAY_SECS ))
     then
         sudo poweroff # add to sudoers file

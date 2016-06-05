@@ -16,21 +16,48 @@ This project is my solution to having my entire music collection in full fidelit
 * Avoid streaming data over my cell phone.
 * Make syncing music an easy and non-interfering process.
 * Use simple and flexible design that allows for easy customization and extensibility.
-* Allow for tactile controls for controlling music (using a touch screen in a car kind of sucks ...and not to mention is dangerous).
+* Allow for tactile controls for controlling music (using a touch screen in a car kind of sucks ...and not very safe).
 
 ## Approach
 
 This project was a good exercise in reframing a problem.  Many ideas I had upfront were either over-engineered or not really relevant to my priorities.
 
-Earlier, I waffled around with many complex ideas, which included a lot of "why not" thoughts that extended to fabricating an entirely new stereo head unit for my car that would have a screen, controls, GPS, WiFi, disc burner, and some database-backed music tracking program that would track offline what music was missing or otherwise out-of-sync with my collection at home by calculating and comparing file hashes.
+Earlier, I waffled around with many complex ideas, which included a lot of "why not" thoughts that extended to fabricating an entirely new stereo head unit for my car that would have a screen, controls, amplifier, GPS, WiFi, disc burner, and some database-backed music tracking program that would track offline what music was missing or otherwise out-of-sync with my collection at home by calculating and comparing file hashes.
 
-I realized that many of the ideas I was considering were already well made: e.g., I wasn't about to casually make an easier to use interface to Google Maps than was already available on my phone.  Speaking of the phone: it's a quality display that can be mounted on the dash.  My existing stereo head unit already handles analog input well and doesn't need to be redone.
+I realized that many of the ideas I was considering were already well made: e.g., I wasn't about to casually make an easier to use interface to Google Maps than was already available on my phone.  Speaking of the phone: there's a quality display that can be mounted on the dash.  My existing stereo head unit already handles analog input well and doesn't need to be redone.
 
 With those considerations in mind, all I really needed is a small computer with large persistent storage that can be controlled by my phone (and more ideally, physical buttons), and a simple strategy for getting music collection changes synced between two offline systems using something like a USB thumb drive as a messenger of state.
 
-## The Build
+## The Hardware
+
+I went with the [Raspberry Pi 2 Model B](https://www.raspberrypi.org/products/raspberry-pi-2-model-b/) and the following components.
+
+* **Audio**
+    * The company, HiFiBerry, makes a pretty neat audio card, the [HifIBerry DAC+](https://www.hifiberry.com/dacplus/), which plugs directly into the Pi's I<sup>2</sup>C bus on the GPIO.  If you're curious, you should check it out - the sound is crisp and full with a high signal-to-noise ratio.  It physically consumes all of the Pi's GPIO pins, but [only uses a fraction of them](https://www.hifiberry.com/guides/gpio-usage-of-the-hifiberry-products/).  An additional pin header can be soldered to the board to access the rest of the pins.
+* **Storage**
+    * A 1TB, shock-resistant USB hard drive.
+    * Ultra High Speed MicroSDHC flash card for OS.
+* **Connectivity**
+    * Edimax EW-7811Un USB Wifi dongle for serving an access point a mobile phone can connect to.
+* **Power**
+    * I was about to build a power supply that turned on with the ignition wire and only cut power once the ignition was off and the Pi had completed a normal shutdown sequence by signalling over the GPIO.  However, I found the same circuit for sale at [Mausberry Circuits](https://mausberry-circuits.myshopify.com/collections/car-power-supply-switches/products/3a-car-supply-switch) that provides 3A across two USB ports.  I'm not sure if I'll continue using it or not.  The first PCB's switching logic failed for an unknown reason.  The site is typically out-of-stock and responses by email can be delayed.  However, the owner seemed kind and sent a second PCB for free to replace the defective one.  The supply seems stable now *...fingers crossed*.  If it fails again, I'll probably just build one myself with a DC-DC buck converter such as [this](http://www.amazon.com/dp/B00CEP3A0Q/) and a MOSFET.
+    * USB-powered USB hub to power disk and other devices through the power supply and not through the Pi.
+
+## The Software
+
+For an OS, I chose [Arch Linux ARM](https://archlinuxarm.org/), because it's familiar and hackable.
+
+At home, I use [Music Player Daemon](https://www.musicpd.org/) (MPD), [ncmpcpp](http://rybczak.net/ncmpcpp/) (an MPD client), and [beets](http://beets.io/) to play and manage my music library.  MPD is great because it's a headless music server that supports a huge array of clients, and is an ideal choice here for its flexibility.  One such MPD client is [MPoD](https://itunes.apple.com/us/app/mpod/id285063020?mt=8) for iOS.
+
+The Pi throws up a WiFi hotspot with [hostapd](https://w1.fi/hostapd/) that mobile phones and other devices can join for controlling the music or otherwise administering the Pi over SSH.
+
+Simplicity is the focus.  In my mind, the design of the project really hinges on how state is kept in sync between two systems that will never talk to each other directly over a network.  A simple way to achieve this is by just carrying the hard drive between systems and using rsync to update the music library.
 
 ## Alternatives Considered
+
+* sync over WiFi
+* git-annex
+* carry disk and update with rsync
 
 ## Misc.
 

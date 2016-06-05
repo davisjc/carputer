@@ -51,7 +51,17 @@ At home, I use [Music Player Daemon](https://www.musicpd.org/) (MPD), [ncmpcpp](
 
 The Pi throws up a WiFi hotspot with [hostapd](https://w1.fi/hostapd/) that mobile phones and other devices can join for controlling the music or otherwise administering the Pi over SSH.
 
-Simplicity is the focus.  In my mind, the design of the project really hinges on how state is kept in sync between two systems that will never talk to each other directly over a network.  A simple way to achieve this is by just carrying the hard drive between systems and using rsync to update the music library.
+The [udevil](https://ignorantguru.github.io/udevil/) package provides some neat facilities for managing device mounts as well as auto-mounting when a new block device is detected.  The included script, devmon, provides a simple way to execute code when an auto-mount happens:
+
+```
+ARGS="--exec-on-drive '/path/to/carputer/repo/bin/devmon_mount_carputer_transport %f %d'"
+```
+
+Simplicity is the focus.  In my mind, the design of the project really hinges on how state is kept in sync between two systems that will never talk to each other directly over a network.  A simple way to opt-out of this is by just carrying the hard drive between systems and using rsync to update the music library.  However, I wanted a way to keep the car's music library in sync without carrying the entire library around.
+
+
+
+## Pictures
 
 ## Alternatives Considered
 

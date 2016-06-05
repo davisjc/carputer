@@ -42,6 +42,8 @@ I went with the [Raspberry Pi 2 Model B](https://www.raspberrypi.org/products/ra
 * **Power**
     * I was about to build a power supply that turned on with the ignition wire and only cut power once the ignition was off and the Pi had completed a normal shutdown sequence by signalling over the GPIO.  However, I found the same circuit for sale at [Mausberry Circuits](https://mausberry-circuits.myshopify.com/collections/car-power-supply-switches/products/3a-car-supply-switch) that provides 3A across two USB ports.  I'm not sure if I'll continue using it or not.  The first PCB's switching logic failed for an unknown reason.  The site is typically out-of-stock and responses by email can be delayed.  However, the owner seemed kind and sent a second PCB for free to replace the defective one.  The supply seems stable now *...fingers crossed*.  If it fails again, I'll probably just build one myself with a DC-DC buck converter such as [this](http://www.amazon.com/dp/B00CEP3A0Q/) and a MOSFET.
     * USB-powered USB hub to power disk and other devices through the power supply and not through the Pi.
+*  **Cable Routing**
+    * TODO
 
 ## The Software
 
@@ -51,11 +53,15 @@ At home, I use [Music Player Daemon](https://www.musicpd.org/) (MPD), [ncmpcpp](
 
 The Pi throws up a WiFi hotspot with [hostapd](https://w1.fi/hostapd/) that mobile phones and other devices can join for controlling the music or otherwise administering the Pi over SSH.
 
-The [udevil](https://ignorantguru.github.io/udevil/) package provides some neat facilities for managing device mounts as well as auto-mounting when a new block device is detected.  The included script, devmon, provides a simple way to execute code when an auto-mount happens:
+The [udevil](https://ignorantguru.github.io/udevil/) package provides some neat facilities for managing device mounts as well as an automounting daemon, [devmon](https://igurublog.wordpress.com/downloads/script-devmon/), that can execute a program when a new block device is detected.  For example, with devmon, you can specify a script to be run when a new drive is plugged in:
 
 ```
-ARGS="--exec-on-drive '/path/to/carputer/repo/bin/devmon_mount_carputer_transport %f %d'"
+ARGS="--always-exec --exec-on-drive '/path/to/carputer/repo/bin/devmon_mount_carputer_transport %f %d'"
 ```
+
+In the above example, devmon will replace `%f` with the file descriptor of the block device, the `%d` with the path to where the device is now mounted, and then invoke `devmon_mount_carputer_transport` with these arugments.  This provides a really simple way for running code when a USB thumb drive is plugged in.
+
+## Music Library Syncing
 
 Simplicity is the focus.  In my mind, the design of the project really hinges on how state is kept in sync between two systems that will never talk to each other directly over a network.  A simple way to opt-out of this is by just carrying the hard drive between systems and using rsync to update the music library.  However, I wanted a way to keep the car's music library in sync without carrying the entire library around.
 
@@ -103,7 +109,7 @@ misc install notes for Arch Linux (will revise):
     * add hook to transport device mount script by editing `/etc/conf.d/devmon`:
 
     ```
-    ARGS="--exec-on-drive '/path/to/carputer/repo/bin/devmon_mount_carputer_transport %f %d'"
+    ARGS="--always-exec --exec-on-drive '/path/to/carputer/repo/bin/devmon_mount_carputer_transport %f %d'"
     ```
     * `systemctl enable devmon.service`
 * hostapd and dhcpd are particular about start order, force waiting on NIC:

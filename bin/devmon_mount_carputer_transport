@@ -10,7 +10,7 @@
 #
 # Can be executed by devmon (part of the udevil package) with arguments such as:
 #
-#     $ devmon --exec-on-drive "/path/to/this/script %f %d"
+#     $ devmon --always-exec --exec-on-drive "/path/to/this/script %f %d"
 #
 # @author: Johnathan Davis
 

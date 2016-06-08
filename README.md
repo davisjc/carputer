@@ -184,9 +184,20 @@ Using the results from the above comer the `music/` directory.
 
 ## Alternatives Considered
 
-* sync over WiFi
-* git-annex
-* carry disk and update with rsync
+### Sync Over WiFi
+* One of my first ideas for staying in sync with the world.  Uses a home-base style WiFi connection that background syncs while the car is parked in the garage.
+* Not very practical since the Pi drains the car battery in a matter of days.
+* Didn't really want to bother with a low-power switching circuit for booting the carputer for a sync.
+
+### git-annex
+* This was a tempting "magic" solution.  If you're unfamiliar with git-annex, here's a brief description: it's an extension of git that exploits git for its version control, but side-steps the only-expanding repo problem by committing file metadata to the repo, not the files themselves.  The cool thing that git-annex provides is a tracking system of which files exist in which remote repos.  The files themsleves are stored in a special git-annex blob directory, and made available through symlinks to the working tree of the repo.  After a bit of reading and mucking around with things, I got everything working with git-annex, but it was damn slow...  And wasn't satisfactory for the following reasons:
+
+    1. By default, it computes the hash of the file to determine its uniqueness.  However, this is avoidable by specifying a different ["backend"](https://git-annex.branchable.com/backends/) for git-annex, such as "Write Once, Read Many", which just means the file is determined unique by its filename, size, and modification date.
+    2. Files in git-annex can be directly exposed by "unlocking" them, which makes the annexed file modifyable through a hard-link to its stored git-annex blob.  Version 6 of git-annex made this easier to deal with.
+    3. The other limitation, which was a more fundamental design constraint, was the way git-annex utilizes git.  In order for git-annex to deal with hard-linked, annexed blobs, git-annex makes use of custom smudge and clean [git filters](https://git-scm.com/book/en/v2/Customizing-Git-Git-Attributes#Keyword-Expansion).  Unfortunately, using git filters means that all file contents are piped through the filter, meaning you must read **all** annexed file content in order to use the filter.  This was painfully slow.  I like the idea of git-annex, but this is way too severe of a limitation for me to consider it seriously for large files.  The creator of git-annex made [a proposal to extend the git's smudge/clean filters](http://thread.gmane.org/gmane.comp.version-control.git/294425) to avoid this hardship, but I haven't heard anything promising yet.
+
+### Carry around USB HDD and update with rsync
+* My second choice.  No doubt it's the most reliable.
 
 ## Misc.
 

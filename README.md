@@ -17,6 +17,8 @@ Updating my carputer's music library happens like this:
 * The music library and any code changes sync to the carputer while a status light blinks.
 * The status light returns to solid state, indicating the update is done and the drive is now unmounted and safe to yank.
 
+### Photos - [The entire photo album is available here on imgur.](http://imgur.com/a/3wIdY)
+
 ![pic](http://i.imgur.com/1TLI3i6.png)
 
 view from top
@@ -24,8 +26,6 @@ view from top
 ![pic](http://i.imgur.com/rzHiFMf.png)
 
 carputer in center console
-
-[Click here to view the entire photo album on imgur.](http://imgur.com/a/3wIdY)
 
 ## Approach
 

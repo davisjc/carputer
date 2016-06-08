@@ -17,6 +17,78 @@ Updating my carputer's music library happens like this:
 * The music library and any code changes sync to the carputer while a status light blinks.
 * The status light returns to solid state, indicating the update is done and the drive is now unmounted and safe to yank.
 
+<div style="float: left; text-align: center; display: inline-block; padding: 2px">
+[![pic](http://i.imgur.com/1TLI3i6.png)](http://i.imgur.com/1PU7UKC.jpg)
+view from top
+</div>
+
+<div style="float: left; text-align: center; display: inline-block; padding: 2px">
+[![pic](http://i.imgur.com/rzHiFMf.png)](https://i.imgur.com/TU6a2hZ.jpg)
+carputer in center console
+</div>
+
+### Construction Pictures
+
+<div style="float: left; text-align: center; display: inline-block; padding: 2px">
+[![pic](http://i.imgur.com/Ez420Tg.png)](http://i.imgur.com/FonMq8e.jpg)
+Pi Cobbler Breakout
+</div>
+
+<div style="float: left; text-align: center; display: inline-block; padding: 2px">
+[![pic](http://i.imgur.com/sOdOFgH.png)](http://i.imgur.com/wNLV9wS.jpg)
+start of ribbon cable slot
+</div>
+
+<div style="float: left; text-align: center; display: inline-block; padding: 2px">
+[![pic](http://i.imgur.com/J71nkWC.png)](http://i.imgur.com/NWMAMIo.jpg)
+ribbon cable slot finished
+</div>
+
+<div style="float: left; text-align: center; display: inline-block; padding: 2px">
+[![pic](http://i.imgur.com/RxtUQhP.png)](http://i.imgur.com/bMHTBDe.jpg)
+ribbon cable pin breakout
+</div>
+
+<div style="float: left; text-align: center; display: inline-block; padding: 2px">
+[![pic](http://i.imgur.com/etIMfOC.png)](http://i.imgur.com/cmKA3vE.jpg)
+ribbon cable port
+</div>
+
+<div style="float: left; text-align: center; display: inline-block; padding: 2px">
+[![pic](http://i.imgur.com/LqhUSF2.png)](http://i.imgur.com/vVThLIg.jpg)
+power supply hot glued into place
+</div>
+
+<div style="float: left; text-align: center; display: inline-block; padding: 2px">
+[![pic](http://i.imgur.com/6ALrJ5p.png)](http://i.imgur.com/OGGGxKd.jpg)
+power supply signal pins
+</div>
+
+<div style="float: left; text-align: center; display: inline-block; padding: 2px">
+[![pic](http://i.imgur.com/glmO7jC.png)](http://i.imgur.com/FHQhK0o.jpg)
+status light and power connected
+</div>
+
+<div style="float: left; text-align: center; display: inline-block; padding: 2px">
+[![pic](http://i.imgur.com/a3fqvwy.png)](http://i.imgur.com/p4SLNfr.png)
+connected to carputer hotspot
+</div>
+
+<div style="float: left; text-align: center; display: inline-block; padding: 2px">
+[![pic](http://i.imgur.com/Rtq8plw.png)](http://i.imgur.com/YUC7LYz.png)
+MPoD album view
+</div>
+
+<div style="float: left; text-align: center; display: inline-block; padding: 2px">
+[![pic](http://i.imgur.com/wRdIf2p.png)](http://i.imgur.com/UZF1fdE.png)
+MPoD current playlist view
+</div>
+
+<div style="float: left; text-align: center; display: inline-block; padding: 2px">
+[![pic](http://i.imgur.com/zhrDL2N.png)](http://i.imgur.com/iPGfzrD.jpg)
+transport device
+</div>
+
 ## Approach
 
 This project was a good exercise in reframing a problem.  Many ideas I had upfront were either over-engineered or not really relevant to my priorities.
@@ -50,7 +122,7 @@ I went with the [Raspberry Pi 2 Model B](https://www.raspberrypi.org/products/ra
     * I was about to build a power supply that turned on with the ignition wire and only cut power once the ignition was off and the Pi had completed a normal shutdown sequence by signalling over the GPIO.  However, I found the same circuit for sale at [Mausberry Circuits](https://mausberry-circuits.myshopify.com/collections/car-power-supply-switches/products/3a-car-supply-switch) that provides 3A across two USB ports.  I'm not sure if I'll continue using it or not.  The first PCB's switching logic failed for an unknown reason.  The site is typically out-of-stock and responses by email can be delayed.  However, the owner seemed kind and sent a second PCB for free to replace the defective one.  The supply seems stable now *...fingers crossed*.  If it fails again, I'll probably just build one myself with a DC-DC buck converter such as [this](http://www.amazon.com/dp/B00CEP3A0Q/) and a MOSFET.
     * USB-powered USB hub to power disk and other devices through the power supply and not through the Pi.
 *  **Cable Routing**
-    * Positioning the Pi in the center console was convenient for easy access to power, the aux audio cable, distance to other controls, and also provides easy access to the Pi itself.
+    * Positioning the Pi in the center console was convenient for easy access to power, the aux audio cable, distance to other controls, and also provides easy access to the Pi itself.http://i.imgur.com/rzHiFMf.png
     * I've been using the PIE FRD04-AUX auxillary audio input harness to get audio fed into the car's stereo.
     * The power supply is tucked away behind the wall of the center console, tapped into the 12V service.
     * A ribbon cable plugs into the top of the Pi and then into the wall of the center console, breaking out into pins on the other side of the wall that can be used for buttons and lights.

@@ -85,9 +85,9 @@ In the above example, devmon will replace `%f` with the file descriptor of the b
 
 ## Music Library Syncing
 
-In my mind, the design of the project really hinges on how state is kept in sync between two systems that will never talk to each other directly over a network.  A simple way to opt-out of this is by just carrying the hard drive between systems and using rsync to push and pull updates from it.  However, I wanted a way to keep the car's music library in sync without carrying the entire library around.
+In my mind, the design of the project really hinges on how state is kept in sync between two systems that will never talk to each other directly over a network.  A simple way to opt-out of this is by just carrying the hard drive between systems and using rsync to push updates to it.  However, I wanted a way to keep the car's music library in sync without carrying the entire library around.
 
-I wanted to perform a short-lived version control transaction whenever I moved a thumb drive from one system to another.  Specifically:
+I wanted to perform a sort of short-lived version control transaction whenever I moved a thumb drive from one system to another.  Specifically:
 * The host machine needs to know what files are missing from the carputer, and copy them to the transport device.
 * The carputer needs to identify which files have gone stale (removed or modified), and remove them from its own library.
 * The carputer needs to copy from the transport device the new files that are currently missing from its library.
@@ -127,9 +127,9 @@ Books, The/The Way Out/albumart.jpg 37875 1384975914
 ...
 ```
 
-Since we're only querying the filesystem for metadata about the files, and not actually reading file contents, this is quite fast even with a large amount of files (see: [`music_list_contents`](bin/music_list_contents)).  This process would be slower if we wanted a more accurate file signature such as a checksum, which must read the contents of the file.  However, I call any difference in size or modififcation date good enough to know it's time to update.
+Since we're only querying the filesystem for metadata about the files, and not actually reading file contents, this is quite fast even with a large amount of files (see: [`music_list_contents`](bin/music_list_contents)).  This process would be slower if we wanted a more accurate file signature such as a checksum, which must read the contents of the file.  However, I call any difference in size or modififcation date good enough to know it's time to update.  Also, since `xargs` is used, the `stat` command is only invoked one time for all files, not once for each file.
 
-For convenience, the MPD database file is also placed in the root music directory so that it is included in this strategy, since it's just a file.  Typically, MPD rescans the music files to regenerate its database file, but since we're just syncing a library of parallel structure, we can just grab the database file from the source system to avoid unnecessary scans on the carputer.  This means our list of music files includes a line that looks like this:
+For convenience, the MPD database file is also placed in the root music directory so that it is included in this strategy, since it is also just a file.  Typically, MPD rescans the music files to regenerate this database file, but since we're just syncing a library of parallel structure, we can just grab the database file from the source system to avoid unnecessary scans on the carputer.  This means our list of music files includes a line that looks like this:
 
 ```
 mpd_database 842730 1465326735
@@ -189,13 +189,14 @@ Putting everything together, the syncing does the following:
 * One of my first ideas for staying in sync with the world.  Uses a home-base style WiFi connection that background syncs while the car is parked in the garage.
 * Not very practical since the Pi drains the car battery in a matter of days.
 * Didn't really want to bother with a low-power switching circuit for booting the carputer for a sync.
+* Depends on being near a WiFi connection to complete a sync.
 
 ### git-annex
 * This was a tempting "magic" solution.  If you're unfamiliar with git-annex, here's a brief description: it's an extension of git that exploits git for its version control, but side-steps the only-expanding repo problem by committing file metadata to the repo, not the files themselves.  The cool thing that git-annex provides is a tracking system of which files exist in which remote repos.  The files themsleves are stored in a special git-annex blob directory, and made available through symlinks to the working tree of the repo.  After a bit of reading and mucking around with things, I got everything working with git-annex, but it was damn slow...  And wasn't satisfactory for the following reasons:
 
     1. By default, it computes the hash of the file to determine its uniqueness, which is slow.  Fortunately, this is avoidable by specifying a different ["backend"](https://git-annex.branchable.com/backends/) for git-annex, such as "Write Once, Read Many", which just means the file is determined unique by its filename, size, and modification date.
     2. Files in git-annex can be directly exposed by "unlocking" them, which makes the annexed file modifyable through a hard-link to its stored git-annex blob.  Version 6 of git-annex made this easier to deal with.
-    3. The other limitation, which was a more fundamental design constraint, was the way git-annex utilizes git.  In order for git-annex to deal with hard-linked, annexed blobs, git-annex makes use of custom smudge and clean [git filters](https://git-scm.com/book/en/v2/Customizing-Git-Git-Attributes#Keyword-Expansion).  Unfortunately, using git filters means that all file contents are piped through the filter, meaning you must read **all** annexed file content in order to use the filter.  This was painfully slow.  I like the idea of git-annex, but this is way too severe of a limitation for me to consider it seriously for large files.  The creator of git-annex made [a proposal to extend the git's smudge/clean filters](http://thread.gmane.org/gmane.comp.version-control.git/294425) to avoid this hardship, but I haven't heard anything promising yet.
+    3. The other limitation, which was a more fundamental design constraint, was the way git-annex utilizes git.  In order for git-annex to deal with hard-linked, annexed blobs, git-annex makes use of custom smudge and clean [git filters](https://git-scm.com/book/en/v2/Customizing-Git-Git-Attributes#Keyword-Expansion).  Unfortunately, using git filters means that all file contents are piped through the filter, meaning you must read **all** annexed file content in order to use the filter.  This was painfully slow.  I like the idea of git-annex, but this is way too severe of a limitation for me to seriously consider it for large files.  The creator of git-annex made [a proposal to extend the git's smudge/clean filters](http://thread.gmane.org/gmane.comp.version-control.git/294425) to avoid this hardship, but I haven't heard anything promising yet.
 
 ### Carry around USB HDD and update with rsync
 * My second choice.  No doubt it's the most reliable.

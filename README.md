@@ -164,18 +164,7 @@ Putting everything together, the syncing does the following:
 4. Explicitly run `music_sync_to_transport` when a sync is desired.
 5. The current music liibrary state is written to `file_list_pc.txt` on the transport device.
 6. [`music_sync_content_to_transport`](bin/music_sync_content_to_transport) is invoked.
-7. `file_list_car.txt` is read and compared against the now-updated `file_list_pc.txt` to copy the missing files to the transport device und `file_list_pc.txt` and `file_list_car.txt`.  As long as we keep these files up-to-date with the latest state of each system, and store these files on the transport device itself, we can easily answer the following questions by using the `comm` command, which just reports common/uncommon lines between sorted files:
-
-* Which files are missing from the carputer that need to be copied?
-```bash
-$ comm -2 -3 "file_list_pc.txt" "file_list_car.txt"
-```
-* Which files need to be removed from the carputer that no longer exist in the master library?
-```bash
-$ comm -1 -3 "file_list_pc.txt" "file_list_car.txt"
-```
-
-Using the results from the above comer the `music/` directory.
+7. `file_list_car.txt` is read and compared against the now-updated `file_list_pc.txt` to copy the missing files to the transport device's `music/` directory.
 8. The most recent version of carputer code is pulled to the transport device under the `code/` directory.
 9. The transport device unmounts once the data is flushed.
 

@@ -65,6 +65,7 @@ I went with the [Raspberry Pi 2 Model B](https://www.raspberrypi.org/products/ra
     * The power supply is tucked away behind the wall of the center console, tapped into the 12V service.
     * A ribbon cable plugs into the top of the Pi and then into the wall of the center console, breaking out into pins on the other side of the wall that can be used for buttons and lights.
     * The ignition wire is spliced and sent towards the center console for use by the power supply.
+* **TODO** - Add physical buttons to control playback
 
 ## The Software
 

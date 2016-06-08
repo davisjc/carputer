@@ -17,77 +17,13 @@ Updating my carputer's music library happens like this:
 * The music library and any code changes sync to the carputer while a status light blinks.
 * The status light returns to solid state, indicating the update is done and the drive is now unmounted and safe to yank.
 
-<div style="float: left; text-align: center; display: inline-block; padding: 2px">
-[![pic](http://i.imgur.com/1TLI3i6.png)](http://i.imgur.com/1PU7UKC.jpg)
+![pic](http://i.imgur.com/1TLI3i6.png)
 view from top
-</div>
 
-<div style="float: left; text-align: center; display: inline-block; padding: 2px">
-[![pic](http://i.imgur.com/rzHiFMf.png)](https://i.imgur.com/TU6a2hZ.jpg)
+![pic](http://i.imgur.com/rzHiFMf.png)
 carputer in center console
-</div>
 
-### Construction Pictures
-
-<div style="float: left; text-align: center; display: inline-block; padding: 2px">
-[![pic](http://i.imgur.com/Ez420Tg.png)](http://i.imgur.com/FonMq8e.jpg)
-Pi Cobbler Breakout
-</div>
-
-<div style="float: left; text-align: center; display: inline-block; padding: 2px">
-[![pic](http://i.imgur.com/sOdOFgH.png)](http://i.imgur.com/wNLV9wS.jpg)
-start of ribbon cable slot
-</div>
-
-<div style="float: left; text-align: center; display: inline-block; padding: 2px">
-[![pic](http://i.imgur.com/J71nkWC.png)](http://i.imgur.com/NWMAMIo.jpg)
-ribbon cable slot finished
-</div>
-
-<div style="float: left; text-align: center; display: inline-block; padding: 2px">
-[![pic](http://i.imgur.com/RxtUQhP.png)](http://i.imgur.com/bMHTBDe.jpg)
-ribbon cable pin breakout
-</div>
-
-<div style="float: left; text-align: center; display: inline-block; padding: 2px">
-[![pic](http://i.imgur.com/etIMfOC.png)](http://i.imgur.com/cmKA3vE.jpg)
-ribbon cable port
-</div>
-
-<div style="float: left; text-align: center; display: inline-block; padding: 2px">
-[![pic](http://i.imgur.com/LqhUSF2.png)](http://i.imgur.com/vVThLIg.jpg)
-power supply hot glued into place
-</div>
-
-<div style="float: left; text-align: center; display: inline-block; padding: 2px">
-[![pic](http://i.imgur.com/6ALrJ5p.png)](http://i.imgur.com/OGGGxKd.jpg)
-power supply signal pins
-</div>
-
-<div style="float: left; text-align: center; display: inline-block; padding: 2px">
-[![pic](http://i.imgur.com/glmO7jC.png)](http://i.imgur.com/FHQhK0o.jpg)
-status light and power connected
-</div>
-
-<div style="float: left; text-align: center; display: inline-block; padding: 2px">
-[![pic](http://i.imgur.com/a3fqvwy.png)](http://i.imgur.com/p4SLNfr.png)
-connected to carputer hotspot
-</div>
-
-<div style="float: left; text-align: center; display: inline-block; padding: 2px">
-[![pic](http://i.imgur.com/Rtq8plw.png)](http://i.imgur.com/YUC7LYz.png)
-MPoD album view
-</div>
-
-<div style="float: left; text-align: center; display: inline-block; padding: 2px">
-[![pic](http://i.imgur.com/wRdIf2p.png)](http://i.imgur.com/UZF1fdE.png)
-MPoD current playlist view
-</div>
-
-<div style="float: left; text-align: center; display: inline-block; padding: 2px">
-[![pic](http://i.imgur.com/zhrDL2N.png)](http://i.imgur.com/iPGfzrD.jpg)
-transport device
-</div>
+[Click here to view the entire photo album on imgur.](http://imgur.com/a/3wIdY)
 
 ## Approach
 

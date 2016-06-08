@@ -18,9 +18,11 @@ Updating my carputer's music library happens like this:
 * The status light returns to solid state, indicating the update is done and the drive is now unmounted and safe to yank.
 
 ![pic](http://i.imgur.com/1TLI3i6.png)
+
 view from top
 
 ![pic](http://i.imgur.com/rzHiFMf.png)
+
 carputer in center console
 
 [Click here to view the entire photo album on imgur.](http://imgur.com/a/3wIdY)
@@ -102,6 +104,7 @@ Books, The/The Way Out/01 - Group Autogenics I.flac 20528401 1384975911
 ```
 
 Combined with `find` and `xargs`, we can generate a text file for all music files on that system of the form:
+
 `<path relative to music root> <size in bytes> <mtime in seconds>`
 
 ```

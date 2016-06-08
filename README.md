@@ -149,9 +149,9 @@ $ comm -1 -3 "file_list_pc.txt" "file_list_car.txt"
 Using the results from the above commands, we can copy new files and remove stale files as necessary to stay in sync.  For more clarity, here's a excerpt from the `comm` manpage:
 
 ```
--1              suppress column 1 (lines unique to FILE1)
--2              suppress column 2 (lines unique to FILE2)
--3              suppress column 3 (lines that appear in both files)
+-1    suppress column 1 (lines unique to FILE1)
+-2    suppress column 2 (lines unique to FILE2)
+-3    suppress column 3 (lines that appear in both files)
 ```
 
 Putting everything together, the syncing does the following:

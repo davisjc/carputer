@@ -6,7 +6,7 @@ Music computer for car.
 
 I love listening to music while driving, and want to be as uninhibited as possible while doing so.
 
-Previously, I had used various mobile streaming apps or would store select music directly on my phone, but I wasn't ever really satisfied with these solutions. I always had to be aware of how much lossy-encoded music I was shovelling over LTE or which songs I'd choose to put on my phone, since space is limited and my music library is large.
+Previously, I had used various mobile streaming apps or would store select music directly on my phone, but I wasn't ever satisfied with these solutions. I always had to be aware of how much lossy-encoded music I was shovelling over LTE or which songs I'd choose to put on my phone, since space is limited and my music library is large.
 
 This project is my solution to having my entire music library in full fidelity available in my car, while making it simple to keep in sync with my library at home.
 
@@ -29,13 +29,13 @@ carputer in center console
 
 ## Approach
 
-This project was a good exercise in reframing a problem.  Many ideas I had upfront were either over-engineered or not really relevant to my priorities.
+This project was a good exercise in reframing a problem.  Many ideas I had upfront were either over-engineered or not relevant to my priorities.
 
 Earlier, I waffled around with many complex ideas, which included a lot of "why not" thoughts that extended to fabricating an entirely new stereo head unit for my car that would have a screen, controls, amplifier, GPS, WiFi, disc burner, and some database-backed music tracking program that would track offline what music was missing or otherwise out-of-sync with my library at home by calculating and comparing file hashes.
 
 I realized that many of the ideas I was considering were already well made: e.g., I wasn't about to casually make an easier to use interface to Google Maps than was already available on my phone.  Speaking of the phone: there's a quality display that can be mounted on the dash.  My existing stereo head unit already handles analog input well and doesn't need to be redone.
 
-With those considerations in mind, all I really needed was a small computer with large persistent storage that can be controlled by my phone (and more ideally, physical buttons), and a simple strategy for getting music library changes synced between two offline systems using something like a USB thumb drive as a messenger of state.
+With those considerations in mind, all I needed was a small computer with large persistent storage that can be controlled by my phone (and more ideally, physical buttons), and a simple strategy for getting music library changes synced between two offline systems using something like a USB thumb drive as a messenger of state.
 
 ## Design Priorities
 
@@ -81,11 +81,11 @@ The [udevil](https://ignorantguru.github.io/udevil/) package provides some neat 
 ARGS="--always-exec --exec-on-drive '/path/to/carputer/repo/bin/devmon_mount_carputer_transport %f %d'"
 ```
 
-In the above example, devmon will replace `%f` with the file descriptor of the block device, the `%d` with the path to where the device is now mounted, and then invoke `devmon_mount_carputer_transport` with these arugments.  This provides a really simple way for running code when a USB thumb drive is plugged in.
+In the above example, devmon will replace `%f` with the file descriptor of the block device, the `%d` with the path to where the device is now mounted, and then invoke `devmon_mount_carputer_transport` with these arugments.  This provides a simple way for running code when a USB thumb drive is plugged in.
 
 ## Music Library Syncing
 
-In my mind, the design of the project really hinges on how state is kept in sync between two systems that will never talk to each other directly over a network.  A simple way to opt-out of this is by just carrying the hard drive between systems and using rsync to push updates to it.  However, I wanted a way to keep the car's music library in sync without carrying the entire library around.
+In my mind, the design of the project hinges on how state is kept in sync between two systems that will never talk to each other directly over a network.  A simple way to opt-out of this is by just carrying the hard drive between systems and using rsync to push updates to it.  However, I wanted a way to keep the car's music library in sync without carrying the entire library around.
 
 I wanted to perform a sort of short-lived version control transaction whenever I moved a thumb drive from one system to another.  Specifically:
 * The host machine needs to know what files are missing from the carputer, and copy them to the transport device.
@@ -188,7 +188,7 @@ Putting everything together, the syncing does the following:
 ### Sync Over WiFi
 * One of my first ideas for staying in sync with the world.  Uses a home-base style WiFi connection that background syncs while the car is parked in the garage.
 * Not very practical since the Pi drains the car battery in a matter of days.
-* Didn't really want to bother with a low-power switching circuit for booting the carputer for a sync.
+* Didn't want to bother with a low-power switching circuit for booting the carputer for a sync.
 * Depends on being near a WiFi connection to complete a sync.
 
 ### git-annex

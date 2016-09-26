@@ -258,7 +258,11 @@ known issues:
         2. the wireless NIC was not properly brought up before hostapd was run
         3. a driver for the wireless NIC is missing
             * NOTE: To use the Edimax EW-7811Un as an AP on Arch Linux, the
-              [`hostapd-rtl871xdrv`](https://aur.archlinux.org/packages/hostapd-rtl871xdrv/)
-              package can be grabbed from the AUR, then specify `driver=rtl871xdrv` in the hostapd
-              config file.
+              [`8192cu-dkms`](https://aur.archlinux.org/packages/8192cu-dkms/)
+              package can be grabbed from the AUR.  These are the drivers for the Edimax's
+              Realtek RTL8188CUS chipset.  Since the package uses Dynamic Kernel Module Support,
+              first grab the kernel headers so it can compile.
+        4. The kernel is too new... if an upgrade breaks something, try rolling back the kernel
+           to see if the other packages are simply not compatible yet.  Also, make sure
+           an AUR package doesn't just need rebuilding.
 

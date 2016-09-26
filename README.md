@@ -261,7 +261,9 @@ known issues:
               [`8192cu-dkms`](https://aur.archlinux.org/packages/8192cu-dkms/)
               package can be grabbed from the AUR.  These are the drivers for the Edimax's
               Realtek RTL8188CUS chipset.  Since the package uses Dynamic Kernel Module Support,
-              first grab the kernel headers so it can compile.
+              first grab the kernel headers so it can compile.  Also grab the version of hostapd
+              that works with this driver, available on the AUR here:
+              [`hostapd-rtl871xdrv`](https://aur.archlinux.org/packages/hostapd-rtl871xdrv/)
         4. The kernel is too new... if an upgrade breaks something, try rolling back the kernel
            to see if the other packages are simply not compatible yet.  Also, make sure
            an AUR package doesn't just need rebuilding.

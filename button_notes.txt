@@ -1,0 +1,46 @@
+
+current playlist view
+
+    select up [spin left]
+    select down [spin right]
+    select up page [yellow + spin left]
+    select down page [yellow + spin right]
+    select first [yellow + left white]
+    select last [yellow + right white]
+    move up [left white]
+    move down [right white]
+    play selected [green]
+    delete [red]
+    clear [yellow + red]
+    find current [yellow + green]
+    go to browse [spin click]
+
+browse view
+
+    select up [spin left]
+    select down [spin right]
+    select up page [yellow + spin left]
+    select down page [yellow + spin right]
+    select left [left white]
+    select right [right white]
+    select first [yellow + left white]
+    select last [yellow + right white]
+    play now [green]
+    add to playlist [red]
+    find current [yellow green]
+    go to current playlist [spin click]
+
+music control mode [blue toggled]
+(switches view to current playlist)
+
+    play/pause [green]
+    stop [red]
+    prev [left white]
+    next [right white]
+    seek backward [spin left]
+    seek forward [spin right]
+    seek fast backward [yellow + spin left]
+    seek fast forward [yellow + spin right]
+    lower button brightness [spin hold + spin left]
+    raise button brightness [spin hold + spin right]
+

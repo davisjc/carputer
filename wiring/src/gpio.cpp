@@ -144,8 +144,6 @@ rotary_int_callback(RotaryInfo& rotary_info)
                 logger::log(msg.str());
             }
 #endif
-        } else {
-            /* 0 or 2 bits changed at once */
         }
 
         rotary_info.hist.last_spin_ms = cur_ms;

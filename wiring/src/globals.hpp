@@ -13,6 +13,10 @@
 #define DEBOUNCE_BUTTON_MS 10
 #define DEBOUNCE_ROTARY_MS 4
 
+/* Screen harness. */
+#define SCREEN_SESSION "carputer_term"
+#define SCREEN_USER "eddie"
+
 #define LED_ILLUM_MAX 255
 
 

@@ -71,7 +71,7 @@ screenharness::flush_commands(void)
     if (pid < 0) {
         logger::error("can't send keys to screen; fork() failed");
     } else if (pid == 0) {
-        std::string cmd = ("screen -S " SCREEN_SESSION " -p 0 -X stuff '" +
+        std::string cmd = ("screen -d -S " SCREEN_SESSION " -p 0 -X stuff '" +
                            command_queue + "'");
         execlp("su", "su", SCREEN_USER, "-c", cmd.c_str(), nullptr);
     } else {

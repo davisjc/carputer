@@ -3,6 +3,7 @@
 
 #include <string>
 #include <unistd.h>
+#include <stdio.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 
@@ -73,6 +74,10 @@ screenharness::flush_commands(void)
     } else if (pid == 0) {
         std::string cmd = ("screen -d -S " SCREEN_SESSION " -p 0 -X stuff '" +
                            command_queue + "'");
+#ifndef DEBUG
+        fclose(stderr);
+        fclose(stdout);
+#endif
         execlp("su", "su", SCREEN_USER, "-c", cmd.c_str(), nullptr);
     } else {
         waitpid(pid, nullptr, 0);

@@ -11,7 +11,7 @@ current playlist view
     move down [right white]
     play selected [green]
     delete [red]
-    clear [yellow + red]
+    clear playlist [yellow + red]
     find current [yellow + green]
     go to browse [spin click]
 
@@ -35,6 +35,7 @@ music control mode [blue toggled]
 
     play/pause [green]
     stop [red]
+    clear playlist [yellow + red]
     prev [left white]
     next [right white]
     seek backward [spin left]

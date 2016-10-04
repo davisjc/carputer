@@ -4,6 +4,7 @@
 #include <string>
 #include <unistd.h>
 #include <stdio.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 
@@ -56,6 +57,31 @@ get_str_for_cmd(screenharness::ScreenCommand cmd)
         default:
             return "";
     }
+}
+
+bool
+screenharness::is_screen_up(void)
+{
+    bool found = false;
+
+    FILE* screen_proc = popen("su " SCREEN_USER " -c 'screen"
+                              " -S " SCREEN_SESSION " -list'", "r");
+    if (screen_proc == nullptr) {
+        logger::error("couldn't check screen; popen() failed");
+        return false;
+    }
+
+    char screen_output[128];
+    while (fgets(screen_output, 128, screen_proc) != nullptr) {
+        if (strstr(screen_output, SCREEN_SESSION)) {
+            found = true;
+            break;
+        }
+    }
+
+    fclose(screen_proc);
+
+    return found;
 }
 
 void

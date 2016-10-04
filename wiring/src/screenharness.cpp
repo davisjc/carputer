@@ -84,6 +84,20 @@ screenharness::is_screen_up(void)
     return found;
 }
 
+bool
+screenharness::spawn_screen(void)
+{
+    pid_t pid = fork();
+    if (pid < 0) {
+        logger::error("can't spawn screen; fork() failed");
+        return false;
+    } else if (pid == 0) {
+        execlp("su", "su", SCREEN_USER, "-c",
+               "screen -D -m -S " SCREEN_SESSION " ncmpcpp", nullptr);
+    }
+    return true;
+}
+
 void
 screenharness::enqueue_command(screenharness::ScreenCommand cmd)
 {

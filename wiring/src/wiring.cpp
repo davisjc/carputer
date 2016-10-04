@@ -17,6 +17,9 @@ main(void)
 {
     gpio::setup();
 
+    if (!screenharness::is_screen_up())
+        screenharness::spawn_screen();
+
     for (;;) {
         uint32_t start_ms = millis();
         bool send_screen_commands = false;

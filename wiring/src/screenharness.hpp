@@ -2,8 +2,6 @@
 #ifndef WIRING_SCREENHARNESS_H
 #define WIRING_SCREENHARNESS_H
 
-#include <string>
-
 
 namespace screenharness {
 
@@ -34,15 +32,29 @@ namespace screenharness {
         GOTO_CURRENT_PLAYLIST,
     } ScreenCommand;
 
+    /**
+     * Returns whether or not the screen session is running.
+     */
     bool
     is_screen_up(void);
 
+    /**
+     * Spawns a new screen session as a child process.
+     */
     bool
     spawn_screen(void);
 
+    /**
+     * Queue up a command to later be sent with flush_commands().
+     */
     void
     enqueue_command(ScreenCommand cmd);
 
+    /**
+     * Sends any commands previously set with enqueue_command().
+     *
+     * NOTE: This also clears the command queue.
+     */
     void
     flush_commands(void);
 }

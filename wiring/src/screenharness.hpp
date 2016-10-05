@@ -33,13 +33,15 @@ namespace screenharness {
     } ScreenCommand;
 
     /**
-     * Returns whether or not the screen session is running.
+     * @return whether or not the screen session is running.
      */
     bool
     is_screen_up(void);
 
     /**
      * Spawns a new screen session as a child process.
+     *
+     * @return true on success; false on failure.
      */
     bool
     spawn_screen(void);

@@ -45,24 +45,38 @@ static int illum_steps[] = {
     0,
     1,
     2,
+    3,
     4,
+    5,
     6,
+    7,
     8,
+    9,
     10,
+    12,
     13,
+    15,
     17,
-    23,
+    20,
+    22,
+    25,
     29,
+    33,
     37,
+    42,
     48,
+    54,
     61,
+    69,
     78,
-    100,
+    88,
+    99,
+    112,
     LED_ILLUM_MAX,
 };
 static const int illum_step_count = (sizeof(illum_steps) /
                                      sizeof(illum_steps[0]));
-static int illum_i = illum_step_count / 2; // TODO serialize last setting
+static int illum_i = (int)(illum_step_count * 3.0 / 4); // TODO serialize
 
 static InputState inputs;
 

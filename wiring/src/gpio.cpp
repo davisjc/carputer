@@ -237,11 +237,13 @@ set_illum(int level)
 {
     uint8_t buf[3] = { 1, 0, 0 };
     buf[1] = illum_steps[level];
+#ifdef DEBUG
     {
         std::ostringstream msg;
         msg << "brightness: " << (int)buf[1];
         logger::log(msg.str());
     }
+#endif
     wiringPiSPIDataRW(0, buf, sizeof(buf)/sizeof(buf[0]));
 }
 

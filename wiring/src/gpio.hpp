@@ -4,6 +4,8 @@
 
 #include "globals.hpp"
 
+#include <stddef.h>
+
 
 namespace gpio {
 
@@ -22,7 +24,7 @@ namespace gpio {
     shift_illum(int steps /* shifts brightness by this amount */);
 
     /**
-     * Reports the rotary spin since last read.
+     * Reports the rotary ticks since last read.
      *
      * Positve values indicate clockwise rotations while negative indicate
      * counter-clockwise.
@@ -31,7 +33,7 @@ namespace gpio {
      *       report 0.
      */
     int
-    read_rotary_spin_value(void);
+    read_rotary_tick_value(void);
 }
 
 #endif /* WIRING_GPIO_H */

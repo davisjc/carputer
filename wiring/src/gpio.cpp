@@ -7,40 +7,67 @@
 #include <math.h>
 #include <pthread.h>
 #include <wiringPi.h>
+#include <wiringPiSPI.h>
 #include <softPwm.h>
 
 #include "types.hpp"
 #include "logger.hpp"
 
 
-/* Lookup table for approximate values of y = 2^x */
+/*
+ * Define a lookup table for button LED brightness ramp of approximately:
+ *
+ *     y = 2^x - 1 for y = (0, 128); x = (0, ~7.011)
+ *
+ * Voltage ranges:
+ *
+ *     MOSFET voltage gate range is about 1.55 V to 2.25 V.
+ *     The desired button LED positive rail range is from 2.1 V - 3.3 V
+ *
+ * In-series resistors can be used above/below a digital potentiometer with
+ * resistance of 9.68 kOhms operating at 3.3 V to obtain the following voltages
+ * ranges available through the wiper pin, allowing finer control over the
+ * MOSFET gate voltage:
+ *
+ *     10 kOhms and 15 kOhms    = 1.45 V - 2.35 V
+ *     10 kOhms and 16 kOhms    = 1.50 V - 2.38 V
+ *     84.2 kOhms and 203 kOhms = 2.25 V - 2.36 V
+ *
+ * Minimum visible voltage for button LEDs:
+ *
+ *     red    = 1.55 V
+ *     yellow = 1.73 V
+ *     green  = 1.97 V
+ *     blue   = 2.31 V
+ *     white  = 2.39 V
+ */
 static int illum_steps[] = {
     0,
     1,
     2,
-    3,
     4,
-    5,
-    7,
-    9,
-    12,
-    16,
-    21,
-    28,
+    6,
+    8,
+    10,
+    13,
+    17,
+    23,
+    29,
     37,
     48,
-    63,
-    84,
-    111,
-    147,
-    193,
+    61,
+    78,
+    100,
     LED_ILLUM_MAX,
 };
 static const int illum_step_count = (sizeof(illum_steps) /
-                                        sizeof(illum_steps[0]));
+                                     sizeof(illum_steps[0]));
 static int illum_i = illum_step_count / 2; // TODO serialize last setting
 
 static InputState inputs;
+
+static void
+set_illum(int level);
 
 static void
 register_int_callback(int pin,
@@ -111,16 +138,15 @@ rotary_int_callback(RotaryInfo& rotary_info)
          *
          *   clockwise                  counter-clockwise
          *   =========                  =================
-         *   10 -> 11                   00 -> 01 <--- good feel!
+         *   10 -> 11                   00 -> 01 <--- good feel! (drops often..)
          *   11 -> 01                   01 -> 11
          *   01 -> 00 <--- good feel!   11 -> 10
-         *   00 -> 10                   10 -> 00
+         *   00 -> 10                   10 -> 00 <--- good balance of feel/drop
          *
-         * All 4 of these get fired every dedent tick of the spin. So if you
-         * want one signal per detent tick, just use one of the 4. Each one
-         * feels a bit different as each one corresponds to a certain point in
-         * the phase of rotation. The best ones can be picked through
-         * experimentation with the particular rotary encoder.
+         * All 4 transitions are incurred during each detent tick. Listening to
+         * just one of these should report a single tick has spun. Note that
+         * there is a lag between the interrupt and reading both pin values.
+         * However, this still catches most of the ticks.
          */
         if (bits_edge == 0b0100) {
             rotary_info.hist.spin_value++;
@@ -128,18 +154,18 @@ rotary_int_callback(RotaryInfo& rotary_info)
             {
                 std::ostringstream msg;
                 for (int b = 3; b >= 0; b--)
-                    msg << ((bits_edge & (1 << b)) ? "1" : "0");
+                        msg << ((bits_edge & (1 << b)) ? "1" : "0");
                 msg << " " << millis() << " clockwise!";
                 logger::log(msg.str());
             }
 #endif
-        } else if (bits_edge == 0b0001) {
+        } else if (bits_edge == 0b1000) {
             rotary_info.hist.spin_value--;
 #ifdef DEBUG
             {
                 std::ostringstream msg;
                 for (int b = 3; b >= 0; b--)
-                    msg << ((bits_edge & (1 << b)) ? "1" : "0");
+                        msg << ((bits_edge & (1 << b)) ? "1" : "0");
                 msg << " " << millis() << " counter-clockwise!";
                 logger::log(msg.str());
             }
@@ -178,46 +204,64 @@ gpio::setup(void)
 #endif
     wiringPiSetupGpio();
 
-    if (softPwmCreate(PIN_LED, 0, LED_ILLUM_MAX)) {
-        logger::error("softPwmCreate() error");
-        exit(1);
-    }
+    wiringPiSPISetup(0, SPI_SPEED_HZ);
 
     /* Initialize input state holder. */
     // TODO create classes for input state
     inputs.rotary.pin_a = PIN_ROTARY_A;
     inputs.rotary.pin_b = PIN_ROTARY_B;
 
+    /* Set pin modes. */
+    // TODO buttons
+
     /* Register callbacks. */
     register_int_callback(PIN_ROTARY_A, INT_EDGE_BOTH, rotary_int_callback);
     register_int_callback(PIN_ROTARY_B, INT_EDGE_BOTH, rotary_int_callback);
+    // TODO buttons
 
     /* Set internal pull-up/pull-down registers. */
     pullUpDnControl(PIN_ROTARY_A, PUD_UP);
     pullUpDnControl(PIN_ROTARY_B, PUD_UP);
+    // TODO buttons
 
-    /* Start PWM of illumination LEDs. */
-    softPwmWrite(PIN_LED, illum_steps[illum_i]);
+    /* Set initial LED brightness. */
+    set_illum(illum_i);
 
 #ifdef DEBUG
     logger::log("GPIO initialized.");
 #endif
 }
 
+static void
+set_illum(int level)
+{
+    uint8_t buf[3] = { 1, 0, 0 };
+    buf[1] = illum_steps[level];
+    {
+        std::ostringstream msg;
+        msg << "brightness: " << (int)buf[1];
+        logger::log(msg.str());
+    }
+    wiringPiSPIDataRW(0, buf, sizeof(buf)/sizeof(buf[0]));
+}
+
 void
 gpio::shift_illum(int levels)
 {
+    if (levels == 0)
+        return;
+
     illum_i += levels;
     if (illum_i >= illum_step_count) {
         illum_i = illum_step_count - 1;
     } else if (illum_i < 0) {
         illum_i = 0;
     }
-    softPwmWrite(PIN_LED, illum_steps[illum_i]);
+    set_illum(illum_i);
 }
 
 int
-gpio::read_rotary_spin_value(void)
+gpio::read_rotary_tick_value(void)
 {
     int spin_value;
     pthread_mutex_lock(&inputs.rotary.mutex);

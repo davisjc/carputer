@@ -10,9 +10,69 @@
 #include <wiringPiSPI.h>
 #include <softPwm.h>
 
-#include "types.hpp"
 #include "logger.hpp"
 
+
+struct ButtonHistory {
+    uint32_t press_count = 0;
+    uint32_t last_press_ms = 0;
+};
+
+struct ButtonInfo {
+    const int pin;
+    ButtonHistory hist;
+    pthread_mutex_t mutex;
+
+    ButtonInfo(const int pin_id)
+        : pin(pin_id)
+    {
+        pthread_mutex_init(&mutex, NULL);
+    }
+
+    ~ButtonInfo()
+    {
+        pthread_mutex_destroy(&mutex);
+    }
+};
+
+struct RotaryHistory {
+    int32_t spin_value = 0; /* clockwise is pos; counter-clockwise is neg */
+
+    /* 2 bits indicate last pin state:
+     *     MSB - pin_a
+     *     LSB - pin_b */
+    int last_bits = 0;
+    uint32_t last_spin_ms = 0;
+};
+
+struct RotaryInfo {
+    const int pin_a;
+    const int pin_b;
+    RotaryHistory hist;
+    pthread_mutex_t mutex;
+
+    RotaryInfo(const int pin_a_id, const int pin_b_id)
+        : pin_a(pin_a_id)
+        , pin_b(pin_b_id)
+    {
+        pthread_mutex_init(&mutex, NULL);
+    }
+
+    ~RotaryInfo()
+    {
+        pthread_mutex_destroy(&mutex);
+    }
+};
+
+struct InputState {
+    //ButtonInfo button_1;
+    //ButtonInfo button_2;
+    RotaryInfo rotary;
+
+    InputState()
+        : rotary(PIN_ROTARY_A, PIN_ROTARY_B)
+    {}
+};
 
 /*
  * Define a lookup table for button LED brightness ramp of approximately:
@@ -89,13 +149,13 @@ register_int_callback(int pin,
                       void (*callback)(void));
 
 //static void
-//button_int_callback(ButtonInfo& button_info);
+//button_int_callback(ButtonInfo &button_info);
 
 static void
-rotary_int_callback(RotaryInfo& rotary_info);
+rotary_int_callback(RotaryInfo &rotary_info);
 
 //static void
-//button_int_callback(ButtonInfo& button_info)
+//button_int_callback(ButtonInfo &button_info)
 //{
 //    uint32_t cur_ms = millis();
 //
@@ -125,7 +185,7 @@ rotary_int_callback(RotaryInfo& rotary_info);
 //}
 
 static void
-rotary_int_callback(RotaryInfo& rotary_info)
+rotary_int_callback(RotaryInfo &rotary_info)
 {
     int pin_a_value = digitalRead(rotary_info.pin_a);
     int pin_b_value = digitalRead(rotary_info.pin_b);
@@ -217,13 +277,7 @@ gpio::setup(void)
     logger::log("Setting up GPIO...");
 #endif
     wiringPiSetupGpio();
-
     wiringPiSPISetup(0, SPI_SPEED_HZ);
-
-    /* Initialize input state holder. */
-    // TODO create classes for input state
-    inputs.rotary.pin_a = PIN_ROTARY_A;
-    inputs.rotary.pin_b = PIN_ROTARY_B;
 
     /* Set pin modes. */
     // TODO buttons

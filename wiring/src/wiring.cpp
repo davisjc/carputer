@@ -6,7 +6,6 @@
 #include "gpio.hpp"
 #include "logger.hpp"
 #include "screenharness.hpp"
-#include "types.hpp"
 
 #define MAX_TICKS_S 30 /* cap ticks per second */
 #define MIN_MS_TICK 1000.0 / MAX_TICKS_S /* min milliseconds every tick */

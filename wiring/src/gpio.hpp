@@ -4,7 +4,9 @@
 
 #include "globals.hpp"
 
+#include <pthread.h>
 #include <stddef.h>
+#include <stdint.h>
 
 
 namespace gpio {

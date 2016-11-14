@@ -154,11 +154,11 @@ screenharness::enqueue_command(screenharness::ScreenCommand cmd)
     command_queue.append(command_str);
 }
 
-void
+bool
 screenharness::flush_commands(void)
 {
     if (command_queue.empty())
-        return; // nothing to flush
+        return false; // nothing to flush
 
     pid_t pid = fork();
     if (pid < 0) {
@@ -171,10 +171,15 @@ screenharness::flush_commands(void)
         fclose(stdout);
 #endif
         execlp("su", "su", SCREEN_USER, "-c", cmd.c_str(), nullptr);
-    } else {
-        waitpid(pid, nullptr, 0);
-        command_queue.clear();
     }
+    command_queue.clear();
+
+    int status;
+    waitpid(pid, &status, 0);
+    if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
+        return true;
+
+    return false;
 }
 
 uint32_t

@@ -63,8 +63,10 @@ namespace screenharness {
      * Sends any commands previously set with enqueue_command().
      *
      * NOTE: This also clears the command queue.
+     *
+     * @return true if flush succeeds; otherwise false.
      */
-    void
+    bool
     flush_commands(void);
 
     /**

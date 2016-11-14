@@ -9,7 +9,8 @@
 #define PIN_BUTTON_WHITE_RIGHT 6
 #define PIN_BUTTON_GREEN 13
 #define PIN_BUTTON_YELLOW 23
-#define PIN_BUTTON_BLUE 24
+//#define PIN_BUTTON_BLUE 24 /* TODO revert once pin fixed */
+#define PIN_BUTTON_BLUE 7
 #define PIN_BUTTON_RED 12
 #define PIN_IGNITION_SENSE 16
 #define PIN_SPI_MOSI 10

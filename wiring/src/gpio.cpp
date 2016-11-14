@@ -235,6 +235,7 @@ button_int_callback(ButtonInfo &button_info)
     } else if (warmup_complete && debounce_ellapsed && pin_value == LOW) {
         input::InputEvent event(button_info.input_id, mode_shift);
         input_state.enqueue_event(event);
+        logger::log("press!"); // TODO remove
         button_info.hist.last_press_ms = cur_ms;
         button_info.hist.is_listening = false;
     }

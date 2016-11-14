@@ -49,12 +49,36 @@ main(void)
 
             switch (event.id) {
                 case input::ROTARY_SPIN_CLOCKWISE:
-                    screenharness::enqueue_command(screenharness::SELECT_DOWN);
-                    //illum_delta++;
+                    if (event.mode_shift.blue) {
+                        if (event.mode_shift.rotary) {
+                            illum_delta++;
+                        }
+                        // TODO
+                    } else {
+                        if (event.mode_shift.yellow) {
+                            screenharness::enqueue_command(
+                                    screenharness::SELECT_DOWN_PAGE);
+                        } else {
+                            screenharness::enqueue_command(
+                                    screenharness::SELECT_DOWN);
+                        }
+                    }
                     break;
                 case input::ROTARY_SPIN_CCLOCKWISE:
-                    //illum_delta--;
-                    screenharness::enqueue_command(screenharness::SELECT_UP);
+                    if (event.mode_shift.blue) {
+                        if (event.mode_shift.rotary) {
+                            illum_delta--;
+                        }
+                        // TODO
+                    } else {
+                        if (event.mode_shift.yellow) {
+                            screenharness::enqueue_command(
+                                    screenharness::SELECT_UP_PAGE);
+                        } else {
+                            screenharness::enqueue_command(
+                                    screenharness::SELECT_UP);
+                        }
+                    }
                     break;
                 case input::ROTARY_PRESS:
                     if (!event.mode_shift.blue) {
@@ -66,6 +90,75 @@ main(void)
                             ui_state_next = CURRENT_PLAYLIST;
                             screenharness::enqueue_command(
                                     screenharness::GOTO_CURRENT_PLAYLIST);
+                        }
+                    }
+                    break;
+                case input::WHITE_LEFT:
+                    if (event.mode_shift.blue) {
+                        // TODO
+                    } else {
+                        if (event.mode_shift.yellow) {
+                            screenharness::enqueue_command(
+                                    screenharness::SELECT_TOP);
+                        } else {
+                            if (ui_state_next == CURRENT_PLAYLIST) {
+                                screenharness::enqueue_command(
+                                        screenharness::MOVE_UP);
+                            } else if (ui_state_next == BROWSE) {
+                                screenharness::enqueue_command(
+                                        screenharness::SELECT_LEFT);
+                            }
+                        }
+                    }
+                    break;
+                case input::WHITE_RIGHT:
+                    if (event.mode_shift.blue) {
+                        // TODO
+                    } else {
+                        if (event.mode_shift.yellow) {
+                            screenharness::enqueue_command(
+                                    screenharness::SELECT_BOTTOM);
+                        } else {
+                            if (ui_state_next == CURRENT_PLAYLIST) {
+                                screenharness::enqueue_command(
+                                        screenharness::MOVE_DOWN);
+                            } else if (ui_state_next == BROWSE) {
+                                screenharness::enqueue_command(
+                                        screenharness::SELECT_RIGHT);
+                            }
+                        }
+                    }
+                    break;
+                case input::GREEN:
+                    if (event.mode_shift.blue) {
+                        // TODO
+                    } else {
+                        if (event.mode_shift.yellow) {
+                            screenharness::enqueue_command(
+                                    screenharness::FIND_CURRENT_PLAYING);
+                        } else {
+                            screenharness::enqueue_command(
+                                    screenharness::PLAY_SELECTED);
+                        }
+                    }
+                    break;
+                case input::RED:
+                    if (event.mode_shift.blue) {
+                        // TODO
+                    } else {
+                        if (event.mode_shift.yellow) {
+                            if (ui_state_next == CURRENT_PLAYLIST) {
+                                screenharness::enqueue_command(
+                                        screenharness::CLEAR);
+                            }
+                        } else {
+                            if (ui_state_next == CURRENT_PLAYLIST) {
+                                screenharness::enqueue_command(
+                                        screenharness::REMOVE);
+                            } else if (ui_state_next == BROWSE) {
+                                screenharness::enqueue_command(
+                                        screenharness::ADD_TO_PLAYING);
+                            }
                         }
                     }
                     break;

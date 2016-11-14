@@ -1,12 +1,13 @@
 
 #include "screenharness.hpp"
 
-#include <string>
-#include <unistd.h>
+#include <sstream>
 #include <stdio.h>
 #include <string.h>
+#include <string>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <unistd.h>
 
 #include "globals.hpp"
 #include "logger.hpp"
@@ -109,6 +110,9 @@ screenharness::enqueue_command(screenharness::ScreenCommand cmd)
 void
 screenharness::flush_commands(void)
 {
+    if (command_queue.empty())
+        return; // nothing to flush
+
     pid_t pid = fork();
     if (pid < 0) {
         logger::error("can't send keys to screen; fork() failed");

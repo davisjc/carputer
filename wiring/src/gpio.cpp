@@ -24,11 +24,13 @@ struct ButtonHistory {
 
 struct ButtonInfo {
     const int pin;
+    const input::InputId input_id;
     ButtonHistory hist;
     pthread_mutex_t mutex;
 
-    ButtonInfo(const int pin_id)
-        : pin(pin_id)
+    ButtonInfo(const int pin_number, const input::InputId input_id_value)
+        : pin(pin_number)
+        , input_id(input_id_value)
     {
         pthread_mutex_init(&mutex, NULL);
     }
@@ -81,13 +83,13 @@ public:
 
     InputState()
         : rotary(PIN_ROTARY_A, PIN_ROTARY_B)
-        , button_rotary(PIN_BUTTON_ROTARY)
-        , button_white_left(PIN_BUTTON_WHITE_LEFT)
-        , button_white_right(PIN_BUTTON_WHITE_RIGHT)
-        , button_green(PIN_BUTTON_GREEN)
-        , button_red(PIN_BUTTON_RED)
-        , button_yellow(PIN_BUTTON_YELLOW)
-        , button_blue(PIN_BUTTON_BLUE)
+        , button_rotary(PIN_BUTTON_ROTARY, input::ROTARY_PRESS)
+        , button_white_left(PIN_BUTTON_WHITE_LEFT, input::WHITE_LEFT)
+        , button_white_right(PIN_BUTTON_WHITE_RIGHT, input::WHITE_RIGHT)
+        , button_green(PIN_BUTTON_GREEN, input::GREEN)
+        , button_red(PIN_BUTTON_RED, input::RED)
+        , button_yellow(PIN_BUTTON_YELLOW, input::YELLOW)
+        , button_blue(PIN_BUTTON_BLUE, input::BLUE)
     {
         pthread_mutex_init(&event_queue_mutex, NULL);
     }
@@ -197,6 +199,16 @@ button_int_callback(ButtonInfo &button_info);
 static void
 rotary_int_callback(RotaryInfo &rotary_info);
 
+static input::ModeShift
+read_mode_shift_state(void)
+{
+    input::ModeShift m;
+    m.rotary_toggled = (digitalRead(input_state.button_rotary.pin) == LOW);
+    m.yellow_toggled = (digitalRead(input_state.button_yellow.pin) == LOW);
+    m.blue_toggled = (digitalRead(input_state.button_blue.pin) == LOW);
+    return m;
+}
+
 static void
 button_int_callback(ButtonInfo &button_info)
 {
@@ -205,7 +217,7 @@ button_int_callback(ButtonInfo &button_info)
         logger::log("bouncy.."); // TODO remove
         return; // bouncy.. ignore
     }
-
+    input::ModeShift mode_shift = read_mode_shift_state();
     uint32_t cur_ms = millis();
 
     pthread_mutex_lock(&button_info.mutex);
@@ -214,9 +226,9 @@ button_int_callback(ButtonInfo &button_info)
     bool warmup_complete = (cur_ms > INT_STARTUP_IGNORE_MS);
     bool debounce_ellapsed = (cur_ms - DEBOUNCE_BUTTON_MS >= last_ms);
     if (warmup_complete && debounce_ellapsed) {
-        logger::log("press!"); // TODO remove
+        input::InputEvent event(button_info.input_id, mode_shift);
+        input_state.enqueue_event(event);
         button_info.hist.last_press_ms = cur_ms;
-        //button_info.hist.press_count++; // FIXME
     }
 
     pthread_mutex_unlock(&button_info.mutex);
@@ -270,6 +282,7 @@ rotary_int_callback(RotaryInfo &rotary_info)
     int pin_a_value = digitalRead(rotary_info.pin_a);
     int pin_b_value = digitalRead(rotary_info.pin_b);
     int cur_bits = (pin_a_value << 1) | pin_b_value;
+    input::ModeShift mode_shift = read_mode_shift_state();
     uint32_t cur_ms = millis();
 
     pthread_mutex_lock(&rotary_info.mutex);
@@ -303,7 +316,7 @@ rotary_int_callback(RotaryInfo &rotary_info)
          * However, this still catches most of the ticks.
          */
         if (bits_edge == 0b0100) {
-            input::InputEvent event(input::ROTARY_SPIN_CLOCKWISE);
+            input::InputEvent event(input::ROTARY_SPIN_CLOCKWISE, mode_shift);
             input_state.enqueue_event(event);
 #ifdef DEBUG
             {
@@ -315,7 +328,7 @@ rotary_int_callback(RotaryInfo &rotary_info)
             }
 #endif
         } else if (bits_edge == 0b1000) {
-            input::InputEvent event(input::ROTARY_SPIN_COUNTERCLOCKWISE);
+            input::InputEvent event(input::ROTARY_SPIN_CCLOCKWISE, mode_shift);
             input_state.enqueue_event(event);
 #ifdef DEBUG
             {

@@ -38,8 +38,11 @@ main(void)
                 case input::ROTARY_SPIN_CLOCKWISE:
                     rotary_spin_value++;
                     break;
-                case input::ROTARY_SPIN_COUNTERCLOCKWISE:
+                case input::ROTARY_SPIN_CCLOCKWISE:
                     rotary_spin_value--;
+                    break;
+                case input::ROTARY_PRESS:
+                    logger::log("rotary pressed!");
                     break;
                 default:
                     break;

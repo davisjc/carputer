@@ -1,10 +1,11 @@
 
-#ifndef WIRING_GPIO_H
-#define WIRING_GPIO_H
+#pragma once
 
 #include "globals.hpp"
+#include "input.hpp"
 
 #include <pthread.h>
+#include <queue>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -26,17 +27,12 @@ namespace gpio {
     shift_illum(int steps /* shifts brightness by this amount */);
 
     /**
-     * Reports the rotary ticks since last read.
+     * Populates a queue with input events since last call.
      *
-     * Positve values indicate clockwise rotations while negative indicate
-     * counter-clockwise.
-     *
-     * NOTE: This call consumes the spin value. Immediate successive calls will
-     *       report 0.
+     * NOTE: This call consumes the input events. Immediate successive calls
+     *       will not find nothing.
      */
-    int
-    read_rotary_tick_value(void);
+    void
+    read_input_events(std::queue<input::InputEvent> &input_events);
 }
-
-#endif /* WIRING_GPIO_H */
 

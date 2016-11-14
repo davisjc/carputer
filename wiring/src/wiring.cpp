@@ -1,9 +1,11 @@
 
 #include <iostream>
+#include <queue>
 #include <stdint.h>
 #include <wiringPi.h>
 
 #include "gpio.hpp"
+#include "input.hpp"
 #include "logger.hpp"
 #include "screenharness.hpp"
 
@@ -19,14 +21,33 @@ main(void)
     if (!screenharness::is_screen_up())
         screenharness::spawn_screen();
 
+    std::queue<input::InputEvent> input_events;
+
     for (;;) {
         uint32_t start_ms = millis();
+        int32_t rotary_spin_value = 0;
         //bool send_screen_commands = false;
 
-        int rotary_tick_value = gpio::read_rotary_tick_value();
+        /* Read all input events since last tick. */
+        gpio::read_input_events(input_events);
+        while (!input_events.empty()) {
+            input::InputEvent event = input_events.front();
+            input_events.pop();
+
+            switch (event.id) {
+                case input::ROTARY_SPIN_CLOCKWISE:
+                    rotary_spin_value++;
+                    break;
+                case input::ROTARY_SPIN_COUNTERCLOCKWISE:
+                    rotary_spin_value--;
+                    break;
+                default:
+                    break;
+            }
+        }
 
         /* Update LED illumination value. */
-        gpio::shift_illum(rotary_tick_value);
+        gpio::shift_illum(rotary_spin_value);
 
         //for (int i = rotary_tick_value; i != 0; ) {
             //send_screen_commands = true;

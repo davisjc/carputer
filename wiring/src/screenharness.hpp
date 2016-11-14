@@ -1,6 +1,5 @@
 
-#ifndef WIRING_SCREENHARNESS_H
-#define WIRING_SCREENHARNESS_H
+#pragma once
 
 
 namespace screenharness {
@@ -60,6 +59,4 @@ namespace screenharness {
     void
     flush_commands(void);
 }
-
-#endif /* WIRING_SCREENHARNESS_H */
 

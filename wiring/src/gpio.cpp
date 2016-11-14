@@ -1,20 +1,24 @@
 
 #include "gpio.hpp"
 
-#include <string>
-#include <sstream>
-#include <stdint.h>
 #include <math.h>
 #include <pthread.h>
+#include <queue>
+#include <sstream>
+#include <stddef.h>
+#include <stdint.h>
+#include <string>
+
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
 #include <softPwm.h>
 
+#include "globals.hpp"
+#include "input.hpp"
 #include "logger.hpp"
 
 
 struct ButtonHistory {
-    uint32_t press_count = 0;
     uint32_t last_press_ms = 0;
 };
 
@@ -36,8 +40,6 @@ struct ButtonInfo {
 };
 
 struct RotaryHistory {
-    int32_t spin_value = 0; /* clockwise is pos; counter-clockwise is neg */
-
     /* 2 bits indicate last pin state:
      *     MSB - pin_a
      *     LSB - pin_b */
@@ -64,14 +66,43 @@ struct RotaryInfo {
     }
 };
 
-struct InputState {
-    //ButtonInfo button_1;
-    //ButtonInfo button_2;
+class InputState {
+    std::queue<input::InputEvent> event_queue;
+    pthread_mutex_t event_queue_mutex;
+public:
     RotaryInfo rotary;
+    ButtonInfo button_rotary;
 
     InputState()
         : rotary(PIN_ROTARY_A, PIN_ROTARY_B)
-    {}
+        , button_rotary(PIN_ROTARY_PRESS)
+    {
+        pthread_mutex_init(&event_queue_mutex, NULL);
+    }
+
+    ~InputState()
+    {
+        pthread_mutex_destroy(&event_queue_mutex);
+    }
+
+    void
+    enqueue_event(input::InputEvent event)
+    {
+        pthread_mutex_lock(&event_queue_mutex);
+        event_queue.push(event);
+        pthread_mutex_unlock(&event_queue_mutex);
+    }
+
+    void
+    consume_events(std::queue<input::InputEvent> &input_events)
+    {
+        pthread_mutex_lock(&event_queue_mutex);
+        while (!event_queue.empty()) {
+            input_events.push(event_queue.front());
+            event_queue.pop();
+        }
+        pthread_mutex_unlock(&event_queue_mutex);
+    }
 };
 
 /*
@@ -81,7 +112,7 @@ struct InputState {
  *
  * Voltage ranges:
  *
- *     MOSFET voltage gate range is about 1.55 V to 2.25 V.
+ *     MOSFET gate voltage range is about 1.55 V to 2.25 V.
  *     The desired button LED positive rail range is from 2.1 V - 3.3 V
  *
  * In-series resistors can be used above/below a digital potentiometer with
@@ -138,50 +169,57 @@ static const int illum_step_count = (sizeof(illum_steps) /
                                      sizeof(illum_steps[0]));
 static int illum_i = (int)(illum_step_count * 3.0 / 4); // TODO serialize
 
-static InputState inputs;
-
 static void
 set_illum(int level);
+
+static InputState input_state;
 
 static void
 register_int_callback(int pin,
                       int int_type, /* INT_EDGE_* as defined by wiringPi */
                       void (*callback)(void));
 
-//static void
-//button_int_callback(ButtonInfo &button_info);
+static void
+button_int_callback(ButtonInfo &button_info);
 
 static void
 rotary_int_callback(RotaryInfo &rotary_info);
 
-//static void
-//button_int_callback(ButtonInfo &button_info)
-//{
-//    uint32_t cur_ms = millis();
-//
-//    pthread_mutex_lock(&button_info.mutex);
-//
-//    uint32_t last_ms = button_info.hist.last_press_ms;
-//    bool warmup_complete = (cur_ms > INT_STARTUP_IGNORE_MS);
-//    bool debounce_ellapsed = (cur_ms - DEBOUNCE_BUTTON_MS >= last_ms);
-//    if (warmup_complete && debounce_ellapsed) {
-//        button_info.hist.last_press_ms = cur_ms;
-//        button_info.hist.press_count++;
-//    }
-//
-//    pthread_mutex_unlock(&button_info.mutex);
-//}
+static void
+button_int_callback(ButtonInfo &button_info)
+{
+    int pin_value = digitalRead(button_info.pin);
+    if (pin_value == HIGH) {
+        logger::log("bouncy.."); // TODO remove
+        return; // bouncy.. ignore
+    }
 
-//static void
-//button_1_int_callback(void)
-//{
-//    button_int_callback(inputs.button_1);
-//}
-//
+    uint32_t cur_ms = millis();
+
+    pthread_mutex_lock(&button_info.mutex);
+
+    uint32_t last_ms = button_info.hist.last_press_ms;
+    bool warmup_complete = (cur_ms > INT_STARTUP_IGNORE_MS);
+    bool debounce_ellapsed = (cur_ms - DEBOUNCE_BUTTON_MS >= last_ms);
+    if (warmup_complete && debounce_ellapsed) {
+        logger::log("press!"); // TODO remove
+        button_info.hist.last_press_ms = cur_ms;
+        //button_info.hist.press_count++; // FIXME
+    }
+
+    pthread_mutex_unlock(&button_info.mutex);
+}
+
+static void
+button_rotary_int_callback(void)
+{
+    button_int_callback(input_state.button_rotary);
+}
+
 //static void
 //button_2_int_callback(void)
 //{
-//    button_int_callback(inputs.button_2);
+//    button_int_callback(input_state.button_2);
 //}
 
 static void
@@ -223,7 +261,8 @@ rotary_int_callback(RotaryInfo &rotary_info)
          * However, this still catches most of the ticks.
          */
         if (bits_edge == 0b0100) {
-            rotary_info.hist.spin_value++;
+            input::InputEvent event(input::ROTARY_SPIN_CLOCKWISE);
+            input_state.enqueue_event(event);
 #ifdef DEBUG
             {
                 std::ostringstream msg;
@@ -234,7 +273,8 @@ rotary_int_callback(RotaryInfo &rotary_info)
             }
 #endif
         } else if (bits_edge == 0b1000) {
-            rotary_info.hist.spin_value--;
+            input::InputEvent event(input::ROTARY_SPIN_COUNTERCLOCKWISE);
+            input_state.enqueue_event(event);
 #ifdef DEBUG
             {
                 std::ostringstream msg;
@@ -257,7 +297,7 @@ rotary_int_callback(RotaryInfo &rotary_info)
 static void
 rotary_int_callback()
 {
-    rotary_int_callback(inputs.rotary);
+    rotary_int_callback(input_state.rotary);
 }
 
 static void
@@ -280,17 +320,18 @@ gpio::setup(void)
     wiringPiSPISetup(0, SPI_SPEED_HZ);
 
     /* Set pin modes. */
-    // TODO buttons
+    pinMode(PIN_ROTARY_PRESS, INPUT);
 
     /* Register callbacks. */
     register_int_callback(PIN_ROTARY_A, INT_EDGE_BOTH, rotary_int_callback);
     register_int_callback(PIN_ROTARY_B, INT_EDGE_BOTH, rotary_int_callback);
-    // TODO buttons
+    register_int_callback(PIN_ROTARY_PRESS, INT_EDGE_FALLING,
+                          button_rotary_int_callback);
 
     /* Set internal pull-up/pull-down registers. */
     pullUpDnControl(PIN_ROTARY_A, PUD_UP);
     pullUpDnControl(PIN_ROTARY_B, PUD_UP);
-    // TODO buttons
+    pullUpDnControl(PIN_ROTARY_PRESS, PUD_UP);
 
     /* Set initial LED brightness. */
     set_illum(illum_i);
@@ -330,14 +371,9 @@ gpio::shift_illum(int levels)
     set_illum(illum_i);
 }
 
-int
-gpio::read_rotary_tick_value(void)
+void
+gpio::read_input_events(std::queue<input::InputEvent> &input_events)
 {
-    int spin_value;
-    pthread_mutex_lock(&inputs.rotary.mutex);
-    spin_value = inputs.rotary.hist.spin_value;
-    inputs.rotary.hist.spin_value = 0;
-    pthread_mutex_unlock(&inputs.rotary.mutex);
-    return spin_value;
+    input_state.consume_events(input_events);
 }
 

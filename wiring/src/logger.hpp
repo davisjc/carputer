@@ -1,6 +1,5 @@
 
-#ifndef WIRING_LOGGER_H
-#define WIRING_LOGGER_H
+#pragma once
 
 #include <string>
 
@@ -24,6 +23,4 @@ namespace logger {
     void
     error(std::string msg);
 }
-
-#endif /* WIRING_LOGGER_H */
 

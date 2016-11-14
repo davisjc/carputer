@@ -44,9 +44,9 @@ get_str_for_cmd(screenharness::ScreenCommand cmd)
         case SELECT_BOTTOM:
             return "G";
         case PLAY_SELECTED:
-            return "^M";
+            return "^M"; // TODO not completely implemented in ncmpc yet
         case FIND_CURRENT_PLAYING:
-            return "f";
+            return "f"; // TODO not implemented in ncmpc yet
         case CLEAR:
             return "c";
         case MOVE_UP:
@@ -58,9 +58,9 @@ get_str_for_cmd(screenharness::ScreenCommand cmd)
         case GOTO_BROWSE:
              return "4";
         case ADD_TO_PLAYING:
-             return " ";
+             return "a";
         case GOTO_CURRENT_PLAYLIST:
-             return "1";
+             return "2";
         default:
             return "";
     }

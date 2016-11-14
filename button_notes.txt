@@ -27,7 +27,7 @@ browse view
     select last [yellow + right white]
     play now [green]
     add to playlist [red]
-    find current [yellow green]
+    find current [yellow + green]
     go to current playlist [spin click]
 
 music control mode [blue toggled]

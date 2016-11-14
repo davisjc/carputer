@@ -19,6 +19,8 @@
 
 
 struct ButtonHistory {
+    /* Keep track of whether or not we should be listening for a press. */
+    bool is_listening = true;
     uint32_t last_press_ms = 0;
 };
 
@@ -213,10 +215,6 @@ static void
 button_int_callback(ButtonInfo &button_info)
 {
     int pin_value = digitalRead(button_info.pin);
-    if (pin_value == HIGH) {
-        logger::log("bouncy.."); // TODO remove
-        return; // bouncy.. ignore
-    }
     input::ModeShift mode_shift = read_mode_shift_state();
     uint32_t cur_ms = millis();
 
@@ -225,10 +223,20 @@ button_int_callback(ButtonInfo &button_info)
     uint32_t last_ms = button_info.hist.last_press_ms;
     bool warmup_complete = (cur_ms > INT_STARTUP_IGNORE_MS);
     bool debounce_ellapsed = (cur_ms - DEBOUNCE_BUTTON_MS >= last_ms);
-    if (warmup_complete && debounce_ellapsed) {
+    bool is_listening = button_info.hist.is_listening;
+    if (!is_listening) {
+        // Waiting for button to release.
+        if (pin_value == HIGH) {
+            /* It's important to ignore quick jitters in button transitions
+             * going both ways. Ensure debounce time is reset for depresses. */
+            button_info.hist.last_press_ms = cur_ms;
+            button_info.hist.is_listening = true;
+        }
+    } else if (warmup_complete && debounce_ellapsed && pin_value == LOW) {
         input::InputEvent event(button_info.input_id, mode_shift);
         input_state.enqueue_event(event);
         button_info.hist.last_press_ms = cur_ms;
+        button_info.hist.is_listening = false;
     }
 
     pthread_mutex_unlock(&button_info.mutex);
@@ -386,19 +394,19 @@ gpio::setup(void)
     /* Register callbacks. */
     register_int_callback(PIN_ROTARY_A, INT_EDGE_BOTH, rotary_int_callback);
     register_int_callback(PIN_ROTARY_B, INT_EDGE_BOTH, rotary_int_callback);
-    register_int_callback(PIN_BUTTON_ROTARY, INT_EDGE_FALLING,
+    register_int_callback(PIN_BUTTON_ROTARY, INT_EDGE_BOTH,
                           button_rotary_int_callback);
-    register_int_callback(PIN_BUTTON_WHITE_LEFT, INT_EDGE_FALLING,
+    register_int_callback(PIN_BUTTON_WHITE_LEFT, INT_EDGE_BOTH,
                           button_white_left_int_callback);
-    register_int_callback(PIN_BUTTON_WHITE_RIGHT, INT_EDGE_FALLING,
+    register_int_callback(PIN_BUTTON_WHITE_RIGHT, INT_EDGE_BOTH,
                           button_white_right_int_callback);
-    register_int_callback(PIN_BUTTON_GREEN, INT_EDGE_FALLING,
+    register_int_callback(PIN_BUTTON_GREEN, INT_EDGE_BOTH,
                           button_green_int_callback);
-    register_int_callback(PIN_BUTTON_RED, INT_EDGE_FALLING,
+    register_int_callback(PIN_BUTTON_RED, INT_EDGE_BOTH,
                           button_red_int_callback);
-    register_int_callback(PIN_BUTTON_YELLOW, INT_EDGE_FALLING,
+    register_int_callback(PIN_BUTTON_YELLOW, INT_EDGE_BOTH,
                           button_yellow_int_callback);
-    register_int_callback(PIN_BUTTON_BLUE, INT_EDGE_FALLING,
+    register_int_callback(PIN_BUTTON_BLUE, INT_EDGE_BOTH,
                           button_blue_int_callback);
 
     /* Set internal pull-up/pull-down registers. */

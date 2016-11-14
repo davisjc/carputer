@@ -202,11 +202,11 @@ rotary_int_callback(RotaryInfo &rotary_info);
 static input::ModeShift
 read_mode_shift_state(void)
 {
-    input::ModeShift m;
-    m.rotary_toggled = (digitalRead(input_state.button_rotary.pin) == LOW);
-    m.yellow_toggled = (digitalRead(input_state.button_yellow.pin) == LOW);
-    m.blue_toggled = (digitalRead(input_state.button_blue.pin) == LOW);
-    return m;
+    input::ModeShift mode_shift;
+    mode_shift.rotary = (digitalRead(input_state.button_rotary.pin) == LOW);
+    mode_shift.yellow = (digitalRead(input_state.button_yellow.pin) == LOW);
+    mode_shift.blue = (digitalRead(input_state.button_blue.pin) == LOW);
+    return mode_shift;
 }
 
 static void

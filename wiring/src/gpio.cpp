@@ -72,10 +72,22 @@ class InputState {
 public:
     RotaryInfo rotary;
     ButtonInfo button_rotary;
+    ButtonInfo button_white_left;
+    ButtonInfo button_white_right;
+    ButtonInfo button_green;
+    ButtonInfo button_red;
+    ButtonInfo button_yellow;
+    ButtonInfo button_blue;
 
     InputState()
         : rotary(PIN_ROTARY_A, PIN_ROTARY_B)
-        , button_rotary(PIN_ROTARY_PRESS)
+        , button_rotary(PIN_BUTTON_ROTARY)
+        , button_white_left(PIN_BUTTON_WHITE_LEFT)
+        , button_white_right(PIN_BUTTON_WHITE_RIGHT)
+        , button_green(PIN_BUTTON_GREEN)
+        , button_red(PIN_BUTTON_RED)
+        , button_yellow(PIN_BUTTON_YELLOW)
+        , button_blue(PIN_BUTTON_BLUE)
     {
         pthread_mutex_init(&event_queue_mutex, NULL);
     }
@@ -216,11 +228,41 @@ button_rotary_int_callback(void)
     button_int_callback(input_state.button_rotary);
 }
 
-//static void
-//button_2_int_callback(void)
-//{
-//    button_int_callback(input_state.button_2);
-//}
+static void
+button_white_left_int_callback(void)
+{
+    button_int_callback(input_state.button_white_left);
+}
+
+static void
+button_white_right_int_callback(void)
+{
+    button_int_callback(input_state.button_white_right);
+}
+
+static void
+button_green_int_callback(void)
+{
+    button_int_callback(input_state.button_green);
+}
+
+static void
+button_red_int_callback(void)
+{
+    button_int_callback(input_state.button_red);
+}
+
+static void
+button_yellow_int_callback(void)
+{
+    button_int_callback(input_state.button_yellow);
+}
+
+static void
+button_blue_int_callback(void)
+{
+    button_int_callback(input_state.button_blue);
+}
 
 static void
 rotary_int_callback(RotaryInfo &rotary_info)
@@ -320,18 +362,42 @@ gpio::setup(void)
     wiringPiSPISetup(0, SPI_SPEED_HZ);
 
     /* Set pin modes. */
-    pinMode(PIN_ROTARY_PRESS, INPUT);
+    pinMode(PIN_BUTTON_ROTARY, INPUT);
+    pinMode(PIN_BUTTON_WHITE_LEFT, INPUT);
+    pinMode(PIN_BUTTON_WHITE_RIGHT, INPUT);
+    pinMode(PIN_BUTTON_GREEN, INPUT);
+    pinMode(PIN_BUTTON_RED, INPUT);
+    pinMode(PIN_BUTTON_YELLOW, INPUT);
+    pinMode(PIN_BUTTON_BLUE, INPUT);
 
     /* Register callbacks. */
     register_int_callback(PIN_ROTARY_A, INT_EDGE_BOTH, rotary_int_callback);
     register_int_callback(PIN_ROTARY_B, INT_EDGE_BOTH, rotary_int_callback);
-    register_int_callback(PIN_ROTARY_PRESS, INT_EDGE_FALLING,
+    register_int_callback(PIN_BUTTON_ROTARY, INT_EDGE_FALLING,
                           button_rotary_int_callback);
+    register_int_callback(PIN_BUTTON_WHITE_LEFT, INT_EDGE_FALLING,
+                          button_white_left_int_callback);
+    register_int_callback(PIN_BUTTON_WHITE_RIGHT, INT_EDGE_FALLING,
+                          button_white_right_int_callback);
+    register_int_callback(PIN_BUTTON_GREEN, INT_EDGE_FALLING,
+                          button_green_int_callback);
+    register_int_callback(PIN_BUTTON_RED, INT_EDGE_FALLING,
+                          button_red_int_callback);
+    register_int_callback(PIN_BUTTON_YELLOW, INT_EDGE_FALLING,
+                          button_yellow_int_callback);
+    register_int_callback(PIN_BUTTON_BLUE, INT_EDGE_FALLING,
+                          button_blue_int_callback);
 
     /* Set internal pull-up/pull-down registers. */
     pullUpDnControl(PIN_ROTARY_A, PUD_UP);
     pullUpDnControl(PIN_ROTARY_B, PUD_UP);
-    pullUpDnControl(PIN_ROTARY_PRESS, PUD_UP);
+    pullUpDnControl(PIN_BUTTON_ROTARY, PUD_UP);
+    pullUpDnControl(PIN_BUTTON_WHITE_LEFT, PUD_UP);
+    pullUpDnControl(PIN_BUTTON_WHITE_RIGHT, PUD_UP);
+    pullUpDnControl(PIN_BUTTON_GREEN, PUD_UP);
+    pullUpDnControl(PIN_BUTTON_RED, PUD_UP);
+    pullUpDnControl(PIN_BUTTON_YELLOW, PUD_UP);
+    pullUpDnControl(PIN_BUTTON_BLUE, PUD_UP);
 
     /* Set initial LED brightness. */
     set_illum(illum_i);

@@ -4,7 +4,7 @@
 /* Pins. */
 #define PIN_ROTARY_A 17
 #define PIN_ROTARY_B 27
-#define PIN_ROTARY_PRESS 22
+#define PIN_BUTTON_ROTARY 22
 #define PIN_BUTTON_WHITE_LEFT 5
 #define PIN_BUTTON_WHITE_RIGHT 6
 #define PIN_BUTTON_GREEN 13

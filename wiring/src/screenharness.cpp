@@ -15,6 +15,12 @@
 
 static std::string command_queue;
 
+/* Last time screen harness was verified as up. */
+static uint32_t heartbeat_ms = 0;
+
+/* How many successive respawn attempts have occurred. */
+static uint32_t respawn_attempt_count = 0;
+
 static std::string
 get_str_for_cmd(screenharness::ScreenCommand cmd)
 {
@@ -61,11 +67,11 @@ get_str_for_cmd(screenharness::ScreenCommand cmd)
 }
 
 bool
-screenharness::is_screen_up(void)
+screenharness::is_screen_up(uint32_t cur_ms)
 {
     bool found = false;
 
-    FILE* screen_proc = popen("su " SCREEN_USER " -c 'screen"
+    FILE *screen_proc = popen("su " SCREEN_USER " -c 'screen"
                               " -S " SCREEN_SESSION " -list'", "r");
     if (screen_proc == nullptr) {
         logger::error("couldn't check screen; popen() failed");
@@ -76,6 +82,7 @@ screenharness::is_screen_up(void)
     while (fgets(screen_output, 128, screen_proc) != nullptr) {
         if (strstr(screen_output, SCREEN_SESSION)) {
             found = true;
+            heartbeat_ms = cur_ms;
             break;
         }
     }
@@ -86,18 +93,58 @@ screenharness::is_screen_up(void)
 }
 
 bool
-screenharness::spawn_screen(void)
+screenharness::spawn_screen(uint32_t cur_ms)
 {
     pid_t pid = fork();
     if (pid < 0) {
         logger::error("can't spawn screen; fork() failed");
         return false;
     } else if (pid == 0) {
+        setsid();
         execlp("su", "su", "-", SCREEN_USER, "-c",
-               "LC_COLLATE=en_US.UTF8 screen -D -m -S " SCREEN_SESSION " ncmpc",
+               "LC_COLLATE=en_US.UTF8 screen -d -m -S " SCREEN_SESSION " ncmpc",
                nullptr);
     }
-    return true;
+    waitpid(pid, nullptr, 0);
+
+    if (screenharness::is_screen_up(cur_ms)) {
+        logger::log("spawned new screen session");
+        respawn_attempt_count = 0;
+        return true;
+    } else {
+        logger::error("failed to spawn screen session");
+        respawn_attempt_count++;
+        return false;
+    }
+}
+
+bool
+screenharness::kill_screen(void)
+{
+    pid_t pid = fork();
+    if (pid < 0) {
+        logger::error("can't kill screen; fork() failed");
+        return false;
+    } else if (pid == 0) {
+        execlp("su", "su", SCREEN_USER, "-c",
+               "screen -X -S " SCREEN_SESSION " quit", nullptr);
+    }
+    int status;
+    waitpid(pid, &status, 0);
+
+    if (WIFEXITED(status)) {
+        int exit_status = WEXITSTATUS(status);
+        if (exit_status == 0) {
+            logger::log("killed screen session");
+            heartbeat_ms = 0; // you're a stone cold killer
+            return true;
+        } else {
+            logger::error("failed to kill screen session");
+            return false;
+        }
+    }
+
+    return false;
 }
 
 void
@@ -128,5 +175,17 @@ screenharness::flush_commands(void)
         waitpid(pid, nullptr, 0);
         command_queue.clear();
     }
+}
+
+uint32_t
+screenharness::get_last_heartbeat_ms(void)
+{
+    return heartbeat_ms;
+}
+
+uint32_t
+screenharness::get_respawn_retry_count(void)
+{
+    return respawn_attempt_count;
 }
 

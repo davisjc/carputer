@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include <stdint.h>
+
 
 namespace screenharness {
 
@@ -35,7 +37,7 @@ namespace screenharness {
      * @return whether or not the screen session is running.
      */
     bool
-    is_screen_up(void);
+    is_screen_up(uint32_t cur_ms);
 
     /**
      * Spawns a new screen session as a child process.
@@ -43,7 +45,13 @@ namespace screenharness {
      * @return true on success; false on failure.
      */
     bool
-    spawn_screen(void);
+    spawn_screen(uint32_t cur_ms);
+
+    /**
+     * Kills the active screen session.
+     */
+    bool
+    kill_screen(void);
 
     /**
      * Queue up a command to later be sent with flush_commands().
@@ -58,5 +66,17 @@ namespace screenharness {
      */
     void
     flush_commands(void);
+
+    /**
+     * @return the time in milliseconds the screen was last seen up.
+     */
+    uint32_t
+    get_last_heartbeat_ms(void);
+
+    /**
+     * @return the number of successive respawn attempts have failed.
+     */
+    uint32_t
+    get_respawn_retry_count(void);
 }
 

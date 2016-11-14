@@ -26,6 +26,8 @@
 /* Screen harness. */
 #define SCREEN_SESSION "carputer_term"
 #define SCREEN_USER "eddie"
+#define SCREEN_RESPAWN_RETRY_COUNT 10
+#define SCREEN_CHECK_INTERVAL_MS 5 * 1000
 
 #define LED_ILLUM_MAX 128
 

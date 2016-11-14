@@ -92,8 +92,9 @@ screenharness::spawn_screen(void)
         logger::error("can't spawn screen; fork() failed");
         return false;
     } else if (pid == 0) {
-        execlp("su", "su", SCREEN_USER, "-c",
-               "screen -D -m -S " SCREEN_SESSION " ncmpcpp", nullptr);
+        execlp("su", "su", "-", SCREEN_USER, "-c",
+               "LC_COLLATE=en_US.UTF8 screen -D -m -S " SCREEN_SESSION " ncmpc",
+               nullptr);
     }
     return true;
 }

@@ -425,7 +425,7 @@ gpio::setup(void)
     set_illum(illum_i);
 
 #ifdef DEBUG
-    logger::log("GPIO initialized.");
+    logger::log("GPIO initialized");
 #endif
 }
 

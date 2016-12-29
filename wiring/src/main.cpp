@@ -4,9 +4,11 @@
 #include <stdint.h>
 #include <wiringPi.h>
 
+#include "globals.hpp"
 #include "gpio.hpp"
 #include "input.hpp"
 #include "logger.hpp"
+#include "mpdharness.hpp"
 #include "screenharness.hpp"
 
 #define MAX_TICKS_S 30 /* cap ticks per second */
@@ -50,10 +52,12 @@ main(void)
             switch (event.id) {
                 case input::ROTARY_SPIN_CLOCKWISE:
                     if (event.mode_shift.blue) {
-                        if (event.mode_shift.rotary) {
+                        if (event.mode_shift.rotary)
                             illum_delta++;
-                        }
-                        // TODO
+                        else if (event.mode_shift.yellow)
+                            mpdharness::seek(MPD_SEEK_FAST_S);
+                        else
+                            mpdharness::seek(MPD_SEEK_S);
                     } else {
                         if (event.mode_shift.yellow) {
                             screenharness::enqueue_command(
@@ -66,10 +70,12 @@ main(void)
                     break;
                 case input::ROTARY_SPIN_CCLOCKWISE:
                     if (event.mode_shift.blue) {
-                        if (event.mode_shift.rotary) {
+                        if (event.mode_shift.rotary)
                             illum_delta--;
-                        }
-                        // TODO
+                        else if (event.mode_shift.yellow)
+                            mpdharness::seek(-MPD_SEEK_FAST_S);
+                        else
+                            mpdharness::seek(-MPD_SEEK_S);
                     } else {
                         if (event.mode_shift.yellow) {
                             screenharness::enqueue_command(
@@ -95,7 +101,7 @@ main(void)
                     break;
                 case input::WHITE_LEFT:
                     if (event.mode_shift.blue) {
-                        // TODO
+                        mpdharness::previous();
                     } else {
                         if (event.mode_shift.yellow) {
                             screenharness::enqueue_command(
@@ -113,7 +119,7 @@ main(void)
                     break;
                 case input::WHITE_RIGHT:
                     if (event.mode_shift.blue) {
-                        // TODO
+                        mpdharness::next();
                     } else {
                         if (event.mode_shift.yellow) {
                             screenharness::enqueue_command(
@@ -131,7 +137,7 @@ main(void)
                     break;
                 case input::GREEN:
                     if (event.mode_shift.blue) {
-                        // TODO
+                        mpdharness::playpause();
                     } else {
                         if (event.mode_shift.yellow) {
                             screenharness::enqueue_command(
@@ -144,7 +150,10 @@ main(void)
                     break;
                 case input::RED:
                     if (event.mode_shift.blue) {
-                        // TODO
+                        if (event.mode_shift.yellow)
+                            mpdharness::clear();
+                        else
+                            mpdharness::stop();
                     } else {
                         if (event.mode_shift.yellow) {
                             if (ui_state_next == CURRENT_PLAYLIST) {

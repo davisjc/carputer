@@ -30,5 +30,9 @@
 #define SCREEN_RESPAWN_RETRY_COUNT 10
 #define SCREEN_CHECK_INTERVAL_MS 5 * 1000
 
+/* MPD harness */
+#define MPD_SEEK_S 5
+#define MPD_SEEK_FAST_S 20
+
 #define LED_ILLUM_MAX 128
 

@@ -1,7 +1,7 @@
 
 CC = clang++
 CFLAGS = -std=c++14 -Wall
-LDFLAGS = -lwiringPi -lpthread
+LDFLAGS = -lwiringPi -lpthread -lmpdclient
 SRC = src
 BIN = bin
 SOURCES = $(wildcard $(SRC)/*.cpp)

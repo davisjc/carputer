@@ -31,8 +31,9 @@
 #define SCREEN_CHECK_INTERVAL_MS 5 * 1000
 
 /* MPD harness */
-#define MPD_SEEK_S 5
-#define MPD_SEEK_FAST_S 20
+#define MPD_SEEK_PCT "1%"
+#define MPD_SEEK_FAST_PCT "5%"
+#define MPD_USER "eddie"
 
 #define LED_ILLUM_MAX 128
 

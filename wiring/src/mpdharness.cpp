@@ -1,94 +1,93 @@
 
 #include "mpdharness.hpp"
 
-#include <mpd/client.h>
+#include <queue>
 #include <sstream>
+#include <string.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
+#include "globals.hpp"
 #include "logger.hpp"
 
 
-static void
-handle_mpd_error(struct mpd_connection *conn)
+static std::queue<mpdharness::MPDCommand> command_queue;
+
+void
+mpdharness::enqueue_command(mpdharness::MPDCommand cmd)
 {
-    enum mpd_error err = mpd_connection_get_error(conn);
-    if (err != MPD_ERROR_SUCCESS) {
-        logger::error(mpd_connection_get_error_message(conn));
-    } else {
-        logger::error("attempting to handle mpd error, but none exists");
+    command_queue.push(cmd);
+}
+
+static bool
+run_command(mpdharness::MPDCommand cmd)
+{
+    std::string suffix;
+
+    switch (cmd) {
+        case mpdharness::PLAY_PAUSE:
+            suffix = "toggle";
+            break;
+        case mpdharness::STOP:
+            suffix = "stop";
+            break;
+        case mpdharness::CLEAR:
+            suffix = "clear";
+            break;
+        case mpdharness::PREV:
+            suffix = "prev";
+            break;
+        case mpdharness::NEXT:
+            suffix = "next";
+            break;
+        case mpdharness::SEEK_BACK:
+            suffix = "-" MPD_SEEK_PCT "%";
+            break;
+        case mpdharness::SEEK_BACK_FAST:
+            suffix = "-" MPD_SEEK_FAST_PCT "%";
+            break;
+        case mpdharness::SEEK_FWD:
+            suffix = "+" MPD_SEEK_PCT "%";
+            break;
+        case mpdharness::SEEK_FWD_FAST:
+            suffix = "+" MPD_SEEK_FAST_PCT "%";
+            break;
+        default:
+            return false;
     }
-    mpd_connection_free(conn);
-}
 
-static struct mpd_connection *
-connect(void)
-{
-    struct mpd_connection *conn = mpd_connection_new(nullptr, 0, 100);
-    if (mpd_connection_get_error(conn) != MPD_ERROR_SUCCESS) {
-        handle_mpd_error(conn);
-        return nullptr;
+    pid_t pid = fork();
+    if (pid < 0) {
+        logger::error("can't send keys to mpc; fork() failed");
+    } else if (pid == 0) {
+        std::string cmd = "mpc ";
+        cmd += suffix;
+#ifndef DEBUG
+        fclose(stderr);
+        fclose(stdout);
+#endif
+        execlp("su", "su", MPD_USER, "-c", cmd.c_str(), nullptr);
     }
 
-    return conn;
+    int status;
+    waitpid(pid, &status, 0);
+    if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
+        return true;
+
+    return false;
 }
 
-static void
-disconnect(struct mpd_connection *conn)
+bool
+mpdharness::flush_commands(void)
 {
-    if (!conn) {
-        logger::error("attempted to close null mpd connection");
-        return;
+    if (command_queue.empty())
+        return false;
+
+    while (!command_queue.empty()) {
+        mpdharness::MPDCommand cmd = command_queue.front();
+        command_queue.pop();
+        run_command(cmd);
     }
-
-    if (mpd_connection_get_error(conn) != MPD_ERROR_SUCCESS
-        || !mpd_response_finish(conn))
-        handle_mpd_error(conn);
+    return true;
 }
-
-static void
-run_mpd_cmd(bool (*mpd_func)(struct mpd_connection *))
-{
-    struct mpd_connection *conn = connect();
-    if (!conn)
-        return;
-
-    mpd_func(conn);
-
-    disconnect(conn);
-};
-
-void
-mpdharness::playpause(void)
-{
-    run_mpd_cmd(mpd_send_toggle_pause);
-};
-
-void
-mpdharness::stop(void)
-{
-    run_mpd_cmd(mpd_send_stop);
-}
-
-void
-mpdharness::clear(void)
-{
-    run_mpd_cmd(mpd_send_clear);
-}
-
-void
-mpdharness::previous(void)
-{
-    run_mpd_cmd(mpd_send_previous);
-}
-
-void
-mpdharness::next(void)
-{
-    run_mpd_cmd(mpd_send_next);
-}
-
-void
-mpdharness::seek(int32_t offset_s)
-{
-}
-
 

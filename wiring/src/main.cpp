@@ -55,9 +55,11 @@ main(void)
                         if (event.mode_shift.rotary)
                             illum_delta++;
                         else if (event.mode_shift.yellow)
-                            mpdharness::seek(MPD_SEEK_FAST_S);
+                            mpdharness::enqueue_command(
+                                    mpdharness::SEEK_FWD_FAST);
                         else
-                            mpdharness::seek(MPD_SEEK_S);
+                            mpdharness::enqueue_command(
+                                    mpdharness::SEEK_FWD);
                     } else {
                         if (event.mode_shift.yellow) {
                             screenharness::enqueue_command(
@@ -73,9 +75,11 @@ main(void)
                         if (event.mode_shift.rotary)
                             illum_delta--;
                         else if (event.mode_shift.yellow)
-                            mpdharness::seek(-MPD_SEEK_FAST_S);
+                            mpdharness::enqueue_command(
+                                    mpdharness::SEEK_BACK_FAST);
                         else
-                            mpdharness::seek(-MPD_SEEK_S);
+                            mpdharness::enqueue_command(
+                                    mpdharness::SEEK_BACK);
                     } else {
                         if (event.mode_shift.yellow) {
                             screenharness::enqueue_command(
@@ -101,7 +105,7 @@ main(void)
                     break;
                 case input::WHITE_LEFT:
                     if (event.mode_shift.blue) {
-                        mpdharness::previous();
+                        mpdharness::enqueue_command(mpdharness::PREV);
                     } else {
                         if (event.mode_shift.yellow) {
                             screenharness::enqueue_command(
@@ -119,7 +123,7 @@ main(void)
                     break;
                 case input::WHITE_RIGHT:
                     if (event.mode_shift.blue) {
-                        mpdharness::next();
+                        mpdharness::enqueue_command(mpdharness::NEXT);
                     } else {
                         if (event.mode_shift.yellow) {
                             screenharness::enqueue_command(
@@ -137,7 +141,7 @@ main(void)
                     break;
                 case input::GREEN:
                     if (event.mode_shift.blue) {
-                        mpdharness::playpause();
+                        mpdharness::enqueue_command(mpdharness::PLAY_PAUSE);
                     } else {
                         if (event.mode_shift.yellow) {
                             screenharness::enqueue_command(
@@ -151,9 +155,9 @@ main(void)
                 case input::RED:
                     if (event.mode_shift.blue) {
                         if (event.mode_shift.yellow)
-                            mpdharness::clear();
+                            mpdharness::enqueue_command(mpdharness::CLEAR);
                         else
-                            mpdharness::stop();
+                            mpdharness::enqueue_command(mpdharness::STOP);
                     } else {
                         if (event.mode_shift.yellow) {
                             if (ui_state_next == CURRENT_PLAYLIST) {
@@ -180,9 +184,11 @@ main(void)
         gpio::shift_illum(illum_delta);
 
         /* Send commands to screen. */
-        bool flush_succeeded = screenharness::flush_commands();
-        if (flush_succeeded)
+        if (screenharness::flush_commands())
             ui_state = ui_state_next;
+
+        /* Send commands to mpd. */
+        mpdharness::flush_commands();
 
         /* Restart screen if necessary. */
         if (start_ms - screenharness::get_last_heartbeat_ms() >

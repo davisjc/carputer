@@ -6,40 +6,33 @@
 
 namespace mpdharness {
 
-    /**
-     * Toggle play/pause state.
-     */
-    void
-    playpause(void);
+    typedef enum MPDCommand {
+        NOOP = 0,
+        PLAY_PAUSE,
+        STOP,
+        CLEAR,
+        PREV,
+        NEXT,
+        SEEK_BACK,
+        SEEK_BACK_FAST,
+        SEEK_FWD,
+        SEEK_FWD_FAST,
+    } MPDCommand;
 
     /**
-     * Stop playback.
+     * Queue up a command to later be sent with flush_commands().
      */
     void
-    stop(void);
+    enqueue_command(MPDCommand cmd);
 
     /**
-     * Clears playback queue.
+     * Sends any commands previously set with enqueue_command().
+     *
+     * NOTE: This also clears the command queue.
+     *
+     * @return true if flush succeeds; otherwise false.
      */
-    void
-    clear(void);
-
-    /**
-     * Previous track.
-     */
-    void
-    previous(void);
-
-    /**
-     * Next track.
-     */
-    void
-    next(void);
-
-    /**
-     * Seek in current track.
-     */
-    void
-    seek(int32_t offset_s);
+    bool
+    flush_commands(void);
 }
 
